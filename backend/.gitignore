@@ -1,0 +1,9 @@
+#ignore tf folder
+.terraform/*
+
+#ignore tf state files
+*.tfstate
+*.tfstate.*
+
+#ignore tfvars variable file as it contains sensitive info
+*.tfvars
