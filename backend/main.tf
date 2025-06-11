@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "eks-state-bucket-iac"
+  bucket = "state-eks-secure-infra-automation"
 
   lifecycle {
     prevent_destroy = false
