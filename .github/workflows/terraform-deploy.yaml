@@ -105,11 +105,14 @@ jobs:
           cd ..
           # Initialize main Terraform with remote backend
           terraform init
-
+        
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -out=tfplan -detailed-exitcode -no-color 2>&1 | tee plan_output.txt
+          terraform plan \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -out=tfplan -detailed-exitcode -no-color 2>&1 | tee plan_output.txt
           echo "PLAN_OUTPUT<<EOF" >> $GITHUB_ENV
           cat plan_output.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -190,7 +193,11 @@ jobs:
           name: terraform-plan
           
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: |
+          terraform apply \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -auto-approve tfplan
         
       - name: Extract Cluster Name
         id: extract-cluster-name
