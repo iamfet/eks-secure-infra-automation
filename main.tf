@@ -22,7 +22,7 @@ data "aws_availability_zones" "azs" {
 
 module "myapp-vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.21"
+  version = " ~> 5.21"
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -118,7 +118,7 @@ module "eks" {
     dev = {
       instance_types = ["m5.xlarge"]
       min_size       = 1
-      max_size       = 4
+      max_size       = 5
       desired_size   = 2
     }
   }
@@ -145,15 +145,15 @@ module "eks_blueprints_addons" {
   cluster_autoscaler = {
     set = [
       {
-        name = "extraArgs.scale-down-unneeded-time"
+        name  = "extraArgs.scale-down-unneeded-time"
         value = "1m"
       },
       {
-        name = "extraArgs.skip-nodes-with-local-storage"
+        name  = "extraArgs.skip-nodes-with-local-storage"
         value = false
       },
       {
-        name = "extraArgs.skip-nodes-with-system-pods"
+        name  = "extraArgs.skip-nodes-with-system-pods"
         value = false
       }
     ]
