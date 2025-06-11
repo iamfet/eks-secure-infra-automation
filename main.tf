@@ -20,7 +20,7 @@ data "aws_availability_zones" "azs" {
   state = "available"
 } #queries AWS to provide the names of availability zones dynamically
 
-module "myapp-vpc" {
+module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = " ~> 5.21"
 
