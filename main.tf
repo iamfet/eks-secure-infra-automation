@@ -20,7 +20,7 @@ data "aws_availability_zones" "azs" {
   state = "available"
 } #queries AWS to provide the names of availability zones dynamically
 
-module "myapp-vpc" {
+module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = " ~> 5.21"
 
@@ -59,8 +59,8 @@ module "eks" {
   cluster_name    = "${var.project_name}-eks-cluster"
   cluster_version = var.cluster_version
 
-  subnet_ids = module.myapp-vpc.private_subnets
-  vpc_id     = module.myapp-vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+  vpc_id     = module.vpc.vpc_id
 
   cluster_endpoint_public_access = true
 
@@ -145,15 +145,15 @@ module "eks_blueprints_addons" {
   cluster_autoscaler = {
     set = [
       {
-        name = "extraArgs.scale-down-unneeded-time"
+        name  = "extraArgs.scale-down-unneeded-time"
         value = "1m"
       },
       {
-        name = "extraArgs.skip-nodes-with-local-storage"
+        name  = "extraArgs.skip-nodes-with-local-storage"
         value = false
       },
       {
-        name = "extraArgs.skip-nodes-with-system-pods"
+        name  = "extraArgs.skip-nodes-with-system-pods"
         value = false
       }
     ]
