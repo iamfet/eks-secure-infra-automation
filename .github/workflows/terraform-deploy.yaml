@@ -15,7 +15,7 @@ on:
 permissions:
   id-token: write   # Required for OIDC authentication
   contents: read    # Required to checkout the repository
-  pull-requests: write  # Required to comment on PRs
+  pull-requests: write  # Required to comment on  PRs
 
 env:
   TF_LOG: INFO
