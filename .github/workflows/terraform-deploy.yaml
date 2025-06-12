@@ -15,7 +15,7 @@ on:
 permissions:
   id-token: write   # Required for OIDC authentication
   contents: read    # Required to checkout the repository
-  pull-requests: write  # Required to comment on PRs
+  pull-requests: write  # Required to comment on  PRs
 
 env:
   TF_LOG: INFO
@@ -75,11 +75,102 @@ jobs:
           framework: terraform
           soft_fail: true  # Don't fail the build, just report issues
 
-  terraform-plan:
-    name: Terraform Plan
+  terraform-plan-pr:
+    name: Terraform Plan (PR)
     runs-on: ubuntu-latest
     needs: [tfsec-scan, checkov-scan]
     if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init
+        id: init
+        run: |
+          # Ensure backend S3 bucket exists
+          cd backend
+          terraform init
+          terraform apply -auto-approve
+          cd ..
+          # Initialize main Terraform with remote backend
+          terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -out=tfplan -detailed-exitcode
+          # Generate a summary for the PR comment
+          echo "PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed|Changes to Outputs:|^\s+\+)' | head -n 20 >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          # Save full plan to file for artifact
+          terraform show -no-color tfplan > plan_output.txt
+        continue-on-error: true
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-pr
+          path: tfplan
+          retention-days: 5
+
+      - name: Upload Plan Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-output-pr
+          path: plan_output.txt
+          retention-days: 5
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Comment on PR with Plan Details
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan Summary 📝
+            
+            <details><summary>Show Plan Summary</summary>
+            
+            \`\`\`
+            ${process.env.PLAN_SUMMARY}
+            \`\`\`
+            
+            </details>
+            
+            Full plan details are available in the [plan output artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+  terraform-plan-main:
+    name: Terraform Plan (Main)
+    runs-on: ubuntu-latest
+    needs: [tfsec-scan, checkov-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
       - name: Checkout Repository
@@ -112,64 +203,21 @@ jobs:
           terraform plan \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -out=tfplan -detailed-exitcode
-          # Generate a summary for the PR comment
-          echo "PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
-          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed)' | head -n 20 >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+            -out=tfplan
           # Save full plan to file for artifact
           terraform show -no-color tfplan > plan_output.txt
-        continue-on-error: true
 
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan
+          name: terraform-plan-main
           path: tfplan
           retention-days: 5
-
-      - name: Upload Plan Output
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan-output
-          path: plan_output.txt
-          retention-days: 5
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Comment on PR with Plan Details
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Plan Summary 📝
-            
-            <details><summary>Show Plan Summary</summary>
-            
-            \`\`\`
-            ${process.env.PLAN_SUMMARY}
-            \`\`\`
-            
-            </details>
-            
-            Full plan details are available in the [plan output artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-            
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
 
   terraform-apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: terraform-plan
+    needs: terraform-plan-main
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: dev
     
@@ -190,25 +238,16 @@ jobs:
 
       - name: Terraform Init
         run: |
-          # Ensure backend S3 bucket exists
-          cd backend
-          terraform init
-          terraform apply -auto-approve
-          cd ..
           # Initialize main Terraform with remote backend
           terraform init
 
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: terraform-plan
+          name: terraform-plan-main
           
       - name: Terraform Apply
-        run: |
-          terraform apply \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -auto-approve tfplan
+        run: terraform apply -auto-approve tfplan
         
       - name: Extract Cluster Name
         id: extract-cluster-name
