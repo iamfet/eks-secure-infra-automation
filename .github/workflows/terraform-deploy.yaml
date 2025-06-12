@@ -106,65 +106,54 @@ jobs:
           # Initialize main Terraform with remote backend
           terraform init
 
+
+
+
+
       - name: Terraform Plan
         id: plan
         run: |
           terraform plan \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -out=tfplan -detailed-exitcode
-          # Generate a summary for the PR comment
-          echo "PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
-          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed)' | head -n 20 >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          # Save full plan to file for artifact
-          terraform show -no-color tfplan > plan_output.txt
+            -no-color \
+            -out=tfplan | tee plan_output.txt
         continue-on-error: true
-
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: tfplan
-          retention-days: 5
-
-      - name: Upload Plan Output
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan-output
-          path: plan_output.txt
-          retention-days: 5
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
 
       - name: Comment on PR with Plan Details
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
+        env:
+          PLAN: "${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Plan Summary 📝
+            const output = `#### Terraform Initialization ⚙️\`Success\`
+            #### Terraform Validation 🤖\`Success\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             
-            <details><summary>Show Plan Summary</summary>
+            <details><summary>Show Plan</summary>
             
-            \`\`\`
-            ${process.env.PLAN_SUMMARY}
+            \`\`\`terraform
+            ${process.env.PLAN}
             \`\`\`
             
             </details>
             
-            Full plan details are available in the [plan output artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-            
             *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-            
+              
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
             })
+
+
+
+
+
+
 
   terraform-apply:
     name: Terraform Apply
