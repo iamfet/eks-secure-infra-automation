@@ -7,18 +7,19 @@ terraform {
     use_lockfile = true                              # Enable S3 native state locking, remove if using DynamoDB for state locking
     /*dynamodb_table = "terraform-eks-state-locks"*/ # Uncomment if using DynamoDB for state locking
   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.0.0-beta3"
+      version = ">= 5.99"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.37.1"
+      version = ">= 2.37"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "3.0.0-pre2"
+      version = ">= 2.9"
     }
   }
 }

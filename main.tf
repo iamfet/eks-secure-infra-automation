@@ -17,12 +17,12 @@ provider "helm" {
 
 #VPC for Cluster
 data "aws_availability_zones" "azs" {
-
+  state = "available"
 } #queries AWS to provide the names of availability zones dynamically
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.21.0"
+  version = " ~> 5.21"
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -54,7 +54,7 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.37.0"
+  version = "~> 20.36"
 
   cluster_name    = "${var.project_name}-eks-cluster"
   cluster_version = var.cluster_version
