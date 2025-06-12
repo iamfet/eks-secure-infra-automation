@@ -17,7 +17,7 @@ provider "helm" {
 
 #VPC for Cluster
 data "aws_availability_zones" "azs" {
-  
+
 } #queries AWS to provide the names of availability zones dynamically
 
 module "vpc" {
