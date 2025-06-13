@@ -15,7 +15,7 @@ on:
 permissions:
   id-token: write   # Required for OIDC authentication
   contents: read    # Required to checkout the repository
-  pull-requests: write  # Required to comment on  PRs
+  pull-requests: write  # Required to comment on PRs
 
 env:
   TF_LOG: INFO
@@ -75,8 +75,8 @@ jobs:
           framework: terraform
           soft_fail: true  # Don't fail the build, just report issues
 
-  terraform-plan-pr:
-    name: Terraform Plan (PR)
+  terraform-plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
     needs: [tfsec-scan, checkov-scan]
     if: github.event_name == 'pull_request'
@@ -97,7 +97,6 @@ jobs:
           terraform_version: 1.12.2
 
       - name: Terraform Init
-        id: init
         run: |
           # Ensure backend S3 bucket exists
           cd backend
@@ -116,7 +115,7 @@ jobs:
             -out=tfplan -detailed-exitcode
           # Generate a summary for the PR comment
           echo "PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
-          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed|Changes to Outputs:|^\s+\+)' | head -n 20 >> $GITHUB_ENV
+          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed)' | head -n 20 >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           # Save full plan to file for artifact
           terraform show -no-color tfplan > plan_output.txt
@@ -125,14 +124,14 @@ jobs:
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan-pr
+          name: terraform-plan
           path: tfplan
           retention-days: 5
 
       - name: Upload Plan Output
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan-output-pr
+          name: terraform-plan-output
           path: plan_output.txt
           retention-days: 5
 
@@ -141,6 +140,7 @@ jobs:
         run: exit 1
 
       - name: Comment on PR with Plan Details
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -166,11 +166,12 @@ jobs:
               body: output
             })
 
-  terraform-plan-main:
-    name: Terraform Plan (Main)
+  terraform-apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: [tfsec-scan, checkov-scan]
+    needs: terraform-plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: dev
     
     steps:
       - name: Checkout Repository
@@ -197,57 +198,17 @@ jobs:
           # Initialize main Terraform with remote backend
           terraform init
 
-      - name: Terraform Plan
-        id: plan
-        run: |
-          terraform plan \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -out=tfplan
-          # Save full plan to file for artifact
-          terraform show -no-color tfplan > plan_output.txt
-
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan-main
-          path: tfplan
-          retention-days: 5
-
-  terraform-apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: terraform-plan-main
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: dev
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials via OIDC
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-          
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.12.2
-
-      - name: Terraform Init
-        run: |
-          # Initialize main Terraform with remote backend
-          terraform init
-
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: terraform-plan-main
+          name: terraform-plan
           
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: |
+          terraform apply \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -auto-approve tfplan
         
       - name: Extract Cluster Name
         id: extract-cluster-name
