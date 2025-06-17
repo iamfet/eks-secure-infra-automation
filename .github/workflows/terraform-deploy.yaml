@@ -1,15 +1,184 @@
-name: CI
+name: Terraform Infrastructure Deployment
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read # Required to checkout the repository
+  pull-requests: write # Required to comment on PRs
+
+env:
+  TF_LOG: INFO
+  AWS_REGION: us-east-1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
-    runs-on: [self-hosted, Linux]  # Make sure these match your runner labels
+  terraform-validate:
+    name: Validate Terraform Code
+    runs-on: [self-hosted, Linux, aws]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Print Hello
-        run: echo "Hello from self-hosted runner"
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.0
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  security-scan:
+    name: Security Scan
+    runs-on: [self-hosted, Linux, aws]
+    needs: terraform-validate
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true
+
+      - name: Run checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true
+
+  terraform-plan:
+    name: Plan Infrastructure Changes
+    runs-on: [self-hosted, Linux, aws]
+    needs: security-scan
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -out=tfplan
+
+          # Generate summary for PR comment
+          echo "PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          terraform show -no-color tfplan | grep -E '(Plan:|will be created|will be destroyed|will be changed)' | head -n 20 >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: tfplan
+          retention-days: 5
+
+      - name: Comment on PR with Plan Details
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan Summary 📝
+
+            <details><summary>Show Plan Summary</summary>
+
+            \`\`\`
+            ${process.env.PLAN_SUMMARY}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+  terraform-apply:
+    name: Plan and Apply Infrastructure Changes
+    runs-on: [self-hosted, Linux, aws]
+    needs: security-scan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan and Apply
+        run: |
+          # Create and apply plan
+          terraform plan \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -out=tfplan
+            
+          # Apply the plan
+          terraform apply -auto-approve tfplan
+
+      - name: Extract Cluster Name
+        run: |
+          CLUSTER_NAME=$(terraform output -raw cluster_name || echo "")
+          echo "CLUSTER_NAME=$CLUSTER_NAME" >> $GITHUB_ENV
+
+      - name: Verify Deployment
+        if: env.CLUSTER_NAME != ''
+        run: |
+          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ env.AWS_REGION }}
+          kubectl get nodes
+          kubectl get pods --all-namespaces
