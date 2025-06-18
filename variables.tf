@@ -19,13 +19,13 @@ variable "public_subnets_cidr" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "carney-shop"
+  default     = "joa-shop"
 }
 
 variable "cluster_version" {
   description = "Version of the EKS cluster"
   type        = string
-  default     = "1.33"
+  default     = "1.32"
 }
 
 variable "aws_region" {
