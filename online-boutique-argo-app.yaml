@@ -7,8 +7,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/iamfet/online-boutique-gitops.git
-    targetRevision: HEAD
-    path: /overlays/dev
+    targetRevision: main
+    path: overlays/dev
   destination:
     server: https://kubernetes.default.svc
     namespace: online-boutique
