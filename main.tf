@@ -68,10 +68,12 @@ module "eks" {
   create_node_security_group    = false
 
   cluster_addons = {
-    kube-proxy = {}
-    vpc-cni    = {}
-    coredns    = {}
+    coredns                = {}
+    eks-pod-identity-agent = {}
+    kube-proxy             = {}
+    vpc-cni                = {}
   }
+
 
   # Set authentication mode to API
   authentication_mode = "API"
@@ -118,7 +120,7 @@ module "eks" {
     dev = {
       instance_types = ["m5.xlarge"]
       min_size       = 1
-      max_size       = 4
+      max_size       = 3
       desired_size   = 2
     }
   }
@@ -146,7 +148,7 @@ module "eks_blueprints_addons" {
     set = [
       {
         name  = "extraArgs.scale-down-unneeded-time"
-        value = "1m"
+        value = "2m"
       },
       {
         name  = "extraArgs.skip-nodes-with-local-storage"

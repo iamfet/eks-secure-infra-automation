@@ -19,7 +19,7 @@ variable "public_subnets_cidr" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "joa-shop"
+  default     = "joana-shop"
 }
 
 variable "cluster_version" {
