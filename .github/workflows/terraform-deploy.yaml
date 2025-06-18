@@ -97,6 +97,9 @@ jobs:
           terraform plan \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
+            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
+            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
             -out=tfplan
 
           # Generate summary for PR comment
@@ -166,6 +169,9 @@ jobs:
           terraform plan \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
+            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
+            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
             -out=tfplan
             
           # Apply the plan
@@ -182,3 +188,8 @@ jobs:
           aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ env.AWS_REGION }}
           kubectl get nodes
           kubectl get pods --all-namespaces
+
+      - name: Apply Online Boutique ArgoCD App
+        if: env.CLUSTER_NAME != ''
+        run: |
+          kubectl apply -f online-boutique-argo-app.yaml

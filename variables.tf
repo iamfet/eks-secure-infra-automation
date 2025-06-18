@@ -45,3 +45,22 @@ variable "user_for_dev_role" {
   type        = string
   # No default value
 }
+
+# If the git repository that ArgoCD syncs is private, these variables are required
+variable "gitops_url" {
+  description = "URL of git repo argocd connects and sync"
+  type        = string
+  # No default value
+}
+
+variable "gitops_username" {
+  description = "Username of git repo argocd connects and sync"
+  type        = string
+  # No default value
+}
+
+variable "gitops_password" {
+  description = "Password of git repo argocd connects and sync"
+  type        = string
+  # No default value
+}
