@@ -42,6 +42,12 @@ jobs:
           # Initialize with remote backend
           terraform init
 
+      - name: Release Lock
+        run: |
+          # Release any existing locks
+          terraform force-unlock 75a8a4b5-6e8e-8259-2550-a10e81b9dd7e
+          # Replace with your actual lock ID if different   
+
       - name: Terraform Destroy
         run: |
           terraform destroy \
