@@ -25,7 +25,7 @@ resource "kubernetes_role" "namespace-viewer" {
 
   rule {
     api_groups = [""]
-    resources  = ["pods", "services", "secrets", "configmap", "persistentvolumes"]
+    resources  = ["pods", "services", "secrets", "configmaps", "persistentvolumeclaims"]
     verbs      = ["get", "list", "watch"]
   }
 
@@ -68,7 +68,7 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
   #port forwarding to enable admin access argocd locally through port-forwarding
   rule {
     api_groups = [""]
-    resources  = ["pods/portforward"]
+    resources  = ["pods,pods/portforward"]
     verbs      = ["get", "list", "create"]
   }
 }

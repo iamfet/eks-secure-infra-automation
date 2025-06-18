@@ -75,10 +75,15 @@ module "eks" {
       username      = "admin"
       type          = "STANDARD"
 
-      # Grant admin access with view-only permissions
       policy_associations = {
         viewer = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        edit = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
           access_scope = {
             type = "cluster"
           }
