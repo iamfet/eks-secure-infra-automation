@@ -45,6 +45,7 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform destroy \
+            terraform force-unlock 75a8a4b5-6e8e-8259-2550-a10e81b9dd7e \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
             -var="gitops_url=${{ secrets.GITOPS_URL }}" \
