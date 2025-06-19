@@ -65,10 +65,10 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     verbs      = ["get", "list", "watch"]
   }
 
-  #port forwarding to enable admin access argocd locally through port-forwarding
+  # port forwarding to enable admin access argocd locally through port-forwarding
   rule {
     api_groups = [""]
-    resources  = ["pods,pods/portforward"]
+    resources  = ["pods", "pods/portforward"]
     verbs      = ["get", "list", "create"]
   }
 }
