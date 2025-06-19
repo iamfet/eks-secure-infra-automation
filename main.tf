@@ -75,7 +75,6 @@ module "eks" {
       username      = "admin"
       type          = "STANDARD"
 
-      # Grant admin access with view-only permissions
       policy_associations = {
         viewer = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
@@ -85,6 +84,7 @@ module "eks" {
         }
       }
     }
+    
     developer = {
       principal_arn = aws_iam_role.external-developer.arn
       username      = "developer"
