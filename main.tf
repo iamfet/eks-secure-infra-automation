@@ -84,7 +84,7 @@ module "eks" {
         }
       }
     }
-    
+
     developer = {
       principal_arn = aws_iam_role.external-developer.arn
       username      = "developer"
