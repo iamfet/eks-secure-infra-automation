@@ -72,34 +72,16 @@ module "eks" {
   access_entries = {
     admin = {
       principal_arn = aws_iam_role.external-admin.arn
-      username      = "admin"
+      username      = "admin" # This should match the name used in the Kubernetes role binding
       type          = "STANDARD"
 
-      policy_associations = {
-        viewer = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
     }
 
     developer = {
       principal_arn = aws_iam_role.external-developer.arn
-      username      = "developer"
+      username      = "developer" # This should match the name used in the Kubernetes role binding
       type          = "STANDARD"
 
-      # Grant developer access with view-only permissions to specific namespace
-      policy_associations = {
-        viewer = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            type       = "namespace"
-            namespaces = ["online-boutique"]
-          }
-        }
-      }
     }
   }
 
