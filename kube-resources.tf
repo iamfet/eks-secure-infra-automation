@@ -86,8 +86,15 @@ resource "kubernetes_cluster_role_binding" "cluster_viewer" {
   }
 
   subject {
+    kind      = "Group"
+    name      = "system:masters"
+    api_group = "rbac.authorization.k8s.io"
+  }
+
+  # Add a subject for the assumed role ARN
+  subject {
     kind      = "User"
-    name      = "admin" # This should match the username in the EKS access entry
+    name      = "arn:aws:sts::495599766789:assumed-role/external-admin/K8SSession"
     api_group = "rbac.authorization.k8s.io"
   }
 }
