@@ -52,6 +52,12 @@ resource "kubernetes_role_binding" "namespace-viewer" {
     name      = "developer" # This should match the username in the EKS access entry
     api_group = "rbac.authorization.k8s.io"
   }
+  # Add a subject for the assumed role ARN
+  subject {
+    kind      = "User"
+    name      = "arn:aws:sts::495599766789:assumed-role/external-developer/K8SSession"
+    api_group = "rbac.authorization.k8s.io"
+  }
 }
 
 resource "kubernetes_cluster_role" "cluster_viewer" {
