@@ -24,7 +24,7 @@ resource "aws_iam_role_policy" "external-admin-eks-access" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = ["eks:DescribeCluster", "eks:ListClusters"]
+        Action   = ["eks:DescribeCluster", "eks:ListClusters", "eks:AccessKubernetesApi"]
         Effect   = "Allow"
         Resource = "*"
       }
@@ -58,7 +58,7 @@ resource "aws_iam_role_policy" "external-developer-eks-access" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = ["eks:DescribeCluster"]
+        Action   = ["eks:DescribeCluster", "eks:AccessKubernetesApi"]
         Effect   = "Allow"
         Resource = "*"
       }
