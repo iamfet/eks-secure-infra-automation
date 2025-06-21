@@ -42,6 +42,10 @@ jobs:
           # Initialize with remote backend
           terraform init
 
+      - name: Terraform Refresh State Lock
+        run: |
+          terraform refresh
+
       - name: Terraform Destroy
         run: |
           terraform destroy \
