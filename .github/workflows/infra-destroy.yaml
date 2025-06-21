@@ -40,7 +40,12 @@ jobs:
       - name: Terraform Init
         run: |
           # Initialize with remote backend
-          terraform init 
+          terraform init
+
+      - name: Terraform Release State Lock
+        run: |
+          # Release any state lock if it exists
+          terraform force-unlock -force $(terraform state list | grep 'lock' | awk '{print $1}')
 
       - name: Terraform Destroy
         run: |
