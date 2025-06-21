@@ -45,7 +45,7 @@ jobs:
       - name: Terraform Release State Lock
         run: |
           # Release any state lock if it exists
-          terraform force-unlock -force $(terraform state list | grep 'lock' | awk '{print $1}')
+          terraform force-unlock -force 5bc2029a-56cb-c95d-90eb-b475ff3332ef
 
       - name: Terraform Destroy
         run: |
