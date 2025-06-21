@@ -50,16 +50,6 @@ jobs:
             -var="gitops_url=${{ secrets.GITOPS_URL }}" \
             -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
             -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}"
-
-      - name: Terraform Destroy
-        run: |
-          terraform destroy \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
-            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
-            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
-            -auto-approve
             
       - name: Clean up backend
         run: |
