@@ -46,6 +46,13 @@ jobs:
         run: terraform force-unlock -force 67f3b23d-fced-793b-807f-0ec4ae73a5d1
         continue-on-error: true
 
+      - name: Remove ArgoCD applications
+        run: |
+          aws eks update-kubeconfig --name ama-shop-eks-cluster --region ${{ env.AWS_REGION }}
+          kubectl delete applications --all -n argocd || true
+          kubectl delete appprojects --all -n argocd || true
+        continue-on-error: true
+
       - name: Terraform Destroy
         run: |
           terraform destroy \
