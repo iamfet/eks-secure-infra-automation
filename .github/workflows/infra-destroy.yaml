@@ -53,7 +53,16 @@ jobs:
           kubectl delete appprojects --all -n argocd || true
         continue-on-error: true
 
-      - name: Terraform Destroy
+      - name: Terraform Destroy - EKS First
+        run: |
+          terraform destroy \
+            -target=module.eks \
+            -target=module.eks_blueprints_addons \
+            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
+            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -auto-approve
+            
+      - name: Terraform Destroy - Remaining Resources
         run: |
           terraform destroy \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
