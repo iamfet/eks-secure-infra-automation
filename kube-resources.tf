@@ -1,12 +1,17 @@
-provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+data "aws_eks_cluster" "cluster" {
+  name       = "${var.project_name}-eks-cluster"
+  depends_on = [module.eks]
+}
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-  }
+data "aws_eks_cluster_auth" "cluster" {
+  name       = "${var.project_name}-eks-cluster"
+  depends_on = [module.eks]
+}
+
+provider "kubernetes" {
+  host                   = try(data.aws_eks_cluster.cluster.endpoint, "")
+  cluster_ca_certificate = try(base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data), "")
+  token                  = try(data.aws_eks_cluster_auth.cluster.token, "")
 }
 
 resource "kubernetes_namespace" "online-boutique" {
