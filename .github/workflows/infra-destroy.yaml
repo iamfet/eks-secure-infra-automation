@@ -42,6 +42,10 @@ jobs:
           # Initialize with remote backend
           terraform init
 
+      - name: Release state lock
+        run: terraform force-unlock -force 87b8cb3b-d232-8e7f-1024-a538979e357e
+        continue-on-error: true
+
       - name: Terraform Destroy
         run: |
           terraform destroy \
