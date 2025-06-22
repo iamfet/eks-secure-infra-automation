@@ -23,7 +23,7 @@ resource "helm_release" "argocd" {
   ]
 }
 
-resource "kubernetes_secret" "argocd_gitops_repo" {
+/* resource "kubernetes_secret" "argocd_gitops_repo" {
   depends_on = [
     helm_release.argocd
   ]
@@ -36,12 +36,12 @@ resource "kubernetes_secret" "argocd_gitops_repo" {
     }
   }
 
-  /*   data = {
+  data = {
     type : "git"
     url : var.gitops_url
     username : var.gitops_username
     password : var.gitops_password
   }
 
-  type = "Opaque" */
-}
+  type = "Opaque"
+} */
