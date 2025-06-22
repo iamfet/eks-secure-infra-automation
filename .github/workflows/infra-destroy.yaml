@@ -43,7 +43,7 @@ jobs:
           terraform init
 
       - name: Release state lock
-        run: terraform force-unlock -force 67f3b23d-fced-793b-807f-0ec4ae73a5d1
+        run: terraform force-unlock -force 582924a3-1fc3-bbdf-c51c-913f55ff6771
         continue-on-error: true
 
       - name: Remove ArgoCD applications
