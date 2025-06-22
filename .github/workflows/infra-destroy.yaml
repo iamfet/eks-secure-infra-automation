@@ -43,7 +43,7 @@ jobs:
           terraform init
 
       - name: Release state lock
-        run: terraform force-unlock -force fb66e087-1b64-5953-8c10-77fa7ad7ffac
+        run: terraform force-unlock -force 216a069e-90a2-8aaa-8102-dc3953cadb54
         continue-on-error: true
 
       - name: Terraform Destroy
