@@ -10,7 +10,7 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_namespace" "online-boutique" {
-  depends_on = [module.eks, module.vpc, module.eks_blueprints_addons]
+  depends_on = [module.eks, module.vpc]
   metadata {
     name = "online-boutique"
   }
