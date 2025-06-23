@@ -43,7 +43,7 @@ jobs:
           terraform init
 
       - name: Release state lock
-        run: terraform force-unlock -force c3681bbc-ae47-5d41-2f2c-6d8ecc6780a2
+        run: terraform force-unlock -force 86fdf0a2-2f51-af57-5a2e-0048aae18690
         continue-on-error: true
 
       - name: Remove ArgoCD applications
@@ -59,6 +59,9 @@ jobs:
           terraform destroy \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
+            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
+            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
+            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
             -auto-approve
             
       - name: Clean up backend
