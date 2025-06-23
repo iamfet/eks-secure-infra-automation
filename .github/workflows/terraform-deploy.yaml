@@ -165,20 +165,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Release state lock
-        run: terraform force-unlock -force 995b2532-fb06-7a77-54fe-4b92583a1bff
-        continue-on-error: true
-
-      - name: Refresh state
-        run: |
-          terraform refresh \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
-            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
-            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}"
-
-
       - name: Terraform Plan and Apply
         run: |
           # Create and apply plan
