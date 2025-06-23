@@ -42,9 +42,14 @@ jobs:
           # Initialize with remote backend
           terraform init
 
+      - name: Release state lock
+        run: terraform force-unlock -force c3681bbc-ae47-5d41-2f2c-6d8ecc6780a2
+        continue-on-error: true
+
       - name: Remove ArgoCD applications
         run: |
-          aws eks update-kubeconfig --name ama-shop-eks-cluster --region ${{ env.AWS_REGION }}
+          CLUSTER_NAME=$(terraform output -raw cluster_name 2>/dev/null || echo "ama-shop-eks-cluster")
+          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ env.AWS_REGION }}
           kubectl delete applications.argoproj.io --all -n argocd || true
           kubectl delete appprojects.argoproj.io --all -n argocd || true
         continue-on-error: true
