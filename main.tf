@@ -105,7 +105,6 @@ module "eks" {
 
 }
 
-
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.21"
