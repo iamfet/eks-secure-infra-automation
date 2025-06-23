@@ -51,6 +51,8 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
     needs: terraform-validate
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
