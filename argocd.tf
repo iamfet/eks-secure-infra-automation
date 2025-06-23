@@ -21,10 +21,8 @@ resource "helm_release" "argocd" {
   depends_on       = [module.eks, module.vpc]
 }
 
-/* resource "kubernetes_secret" "argocd_gitops_repo" {
-  depends_on = [
-    helm_release.argocd
-  ]
+resource "kubernetes_secret" "argocd_gitops_repo" {
+  depends_on = [helm_release.argocd]
 
   metadata {
     name      = "gitops-k8s-repo"
@@ -42,4 +40,4 @@ resource "helm_release" "argocd" {
   }
 
   type = "Opaque"
-} */
+}
