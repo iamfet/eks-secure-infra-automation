@@ -42,10 +42,6 @@ jobs:
           # Initialize with remote backend
           terraform init
 
-      - name: Release state lock
-        run: terraform force-unlock -force d75164de-5e99-c78a-8418-602658976b34
-        continue-on-error: true
-
       - name: Remove ArgoCD applications
         run: |
           aws eks update-kubeconfig --name ama-shop-eks-cluster --region ${{ env.AWS_REGION }}
@@ -53,16 +49,7 @@ jobs:
           kubectl delete appprojects --all -n argocd || true
         continue-on-error: true
 
-      - name: Terraform Destroy - EKS First
-        run: |
-          terraform destroy \
-            -target=module.eks \
-            -target=module.eks_blueprints_addons \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -auto-approve
-            
-      - name: Terraform Destroy - Remaining Resources
+      - name: Terraform Destroy
         run: |
           terraform destroy \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
