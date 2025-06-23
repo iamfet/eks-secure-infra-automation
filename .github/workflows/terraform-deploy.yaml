@@ -195,3 +195,4 @@ jobs:
         if: env.CLUSTER_NAME != ''
         run: |
           kubectl apply -f online-boutique-argo-app.yaml
+          kubectl apply -f k8s-platform-opa-gateway-argo-app.yaml
