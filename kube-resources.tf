@@ -79,6 +79,17 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
   }
 
   rule {
+    api_groups = ["apps"]
+    resources  = ["*"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["autoscaling"]
+    resources  = ["horizontalpodautoscalers"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
     api_groups = ["apiextensions.k8s.io"]
     resources  = ["customresourcedefinitions"]
     verbs      = ["get", "list"]
@@ -94,12 +105,6 @@ resource "kubernetes_cluster_role_binding" "cluster_viewer" {
   role_ref {
     kind      = "ClusterRole"
     name      = "cluster-viewer"
-    api_group = "rbac.authorization.k8s.io"
-  }
-
-  subject {
-    kind      = "Group"
-    name      = "system:masters"
     api_group = "rbac.authorization.k8s.io"
   }
 
