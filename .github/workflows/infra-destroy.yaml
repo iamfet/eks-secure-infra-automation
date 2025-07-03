@@ -7,20 +7,21 @@ on:
         description: 'Type "destroy" to confirm infrastructure destruction'
         required: true
 
+env:
+  TF_VERSION: "1.12.0"
+  TF_IN_AUTOMATION: true
+  TF_LOG: INFO
+  AWS_REGION: us-east-1
+
 permissions:
   id-token: write
   contents: read
-
-env:
-  TF_LOG: INFO
-  AWS_REGION: us-east-1
 
 jobs:
   terraform-destroy:
     name: Terraform Destroy
     runs-on: ubuntu-latest
     if: github.event.inputs.confirm_destroy == 'destroy'
-    environment: dev
     
     steps:
       - name: Checkout Repository
@@ -29,13 +30,24 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
           
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.12.0
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Create Terraform plugin cache directory
+        run: |
+          mkdir -p ~/.terraform.d/plugin-cache
+          echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > ~/.terraformrc
+
+      - name: Cache Terraform
+        uses: actions/cache@v4.2.3
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
 
       - name: Terraform Init
         run: |
@@ -62,6 +74,6 @@ jobs:
             
       - name: Clean up backend
         run: |
-          cd backend
-          terraform init
-          terraform destroy -auto-approve
+          echo "WARNING: Backend cleanup should be done manually after confirming all infrastructure is destroyed"
+          echo "To destroy backend: cd backend && terraform init && terraform destroy"
+        continue-on-error: true
