@@ -155,19 +155,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const planOutput = `${{ steps.plan.outputs.stdout }}`;
             const hasChanges = '${{ steps.plan.outputs.has_changes }}' === 'true';
+            const exitCode = '${{ steps.plan.outputs.exitcode }}';
             const status = hasChanges ? '🚀 Changes detected' : '😴 No changes';
             
-            // Extract plan summary line
-            const planSummaryMatch = planOutput.match(/Plan: \d+ to add, \d+ to change, \d+ to destroy\./g);
-            const planSummary = planSummaryMatch ? planSummaryMatch[planSummaryMatch.length - 1] : '';
-            
-            let body = `## 🏗️ Terraform Plan\n${status} (Exit code: ${{ steps.plan.outputs.exitcode }})`;
-            
-            if (planSummary) {
-              body += `\n\n**${planSummary}**`;
-            }
+            let body = `## 🏗️ Terraform Plan\n${status} (Exit code: ${exitCode})`;
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
