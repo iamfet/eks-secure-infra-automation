@@ -92,9 +92,9 @@ module "eks" {
 
   eks_managed_node_groups = {
     dev = {
-      instance_types = ["m5.xlarge"]
+      instance_types = ["m5.large"]
       min_size       = 1
-      max_size       = 3
+      max_size       = 4
       desired_size   = 2
     }
   }
