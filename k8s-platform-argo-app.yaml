@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: opa-gateway
+  name: k8s-platform
   namespace: argocd
 spec:
   project: default
@@ -11,7 +11,7 @@ spec:
     path: k8s-platform
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system 
+    namespace: default
   syncPolicy:
     automated:
       prune: true
