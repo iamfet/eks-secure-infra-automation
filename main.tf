@@ -92,7 +92,7 @@ module "eks" {
     dev = {
       instance_types = ["m5.large"]
       min_size       = 1
-      max_size       = 5
+      max_size       = 6
       desired_size   = 2
     }
   }
