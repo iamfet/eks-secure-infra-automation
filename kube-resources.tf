@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  account_id = data.aws_caller_identity.current.account_id
+  account_id        = data.aws_caller_identity.current.account_id
   admin_session_arn = "arn:aws:sts::${local.account_id}:assumed-role/external-admin/K8SSession"
   dev_session_arn   = "arn:aws:sts::${local.account_id}:assumed-role/external-developer/K8SSession"
 }
