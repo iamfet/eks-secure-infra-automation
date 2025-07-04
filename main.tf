@@ -112,7 +112,6 @@ module "eks_blueprints_addons" {
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
-
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
   enable_external_secrets             = true
