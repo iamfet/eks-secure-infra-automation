@@ -72,7 +72,6 @@ module "eks" {
   access_entries = {
     admin = {
       principal_arn = aws_iam_role.external-admin.arn
-      username      = "admin" # This should match the name used in the Kubernetes role binding
       type          = "STANDARD"
       access_scope = {
         type = "cluster"
@@ -81,7 +80,6 @@ module "eks" {
 
     developer = {
       principal_arn = aws_iam_role.external-developer.arn
-      username      = "developer" # This should match the name used in the Kubernetes role binding
       type          = "STANDARD"
       access_scope = {
         type       = "namespace"

@@ -1,3 +1,11 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  admin_session_arn = "arn:aws:sts::${local.account_id}:assumed-role/external-admin/K8SSession"
+  dev_session_arn   = "arn:aws:sts::${local.account_id}:assumed-role/external-developer/K8SSession"
+}
+
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
@@ -49,7 +57,7 @@ resource "kubernetes_role_binding" "namespace-viewer" {
   }
   subject {
     kind      = "User"
-    name      = "developer" # This should match the username in the EKS access entry
+    name      = local.dev_session_arn
     api_group = "rbac.authorization.k8s.io"
   }
 }
@@ -104,7 +112,7 @@ resource "kubernetes_cluster_role_binding" "cluster_viewer" {
 
   subject {
     kind      = "User"
-    name      = "admin"
+    name      = local.admin_session_arn
     api_group = "rbac.authorization.k8s.io"
   }
 
