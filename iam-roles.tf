@@ -94,7 +94,7 @@ resource "aws_iam_role_policy" "external-secrets-policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        // Read access to all secrets in the secrets manager
+        #Read access to all secrets in the secrets manager
         Effect   = "Allow"
         Resource = "*"
         Action = [
