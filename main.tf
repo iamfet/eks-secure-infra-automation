@@ -151,7 +151,7 @@ module "eks_blueprints_addons" {
   enable_metrics_server               = true
   enable_cluster_autoscaler           = true
   enable_external_secrets             = true
-  
+
   # Ensure AWS Load Balancer Controller is ready before other services
   aws_load_balancer_controller = {
     wait = true
