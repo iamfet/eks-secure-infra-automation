@@ -138,9 +138,9 @@ module "eks" {
 }
 
 module "eks_blueprints_addons" {
-  depends_on = [ module.eks ]
-  source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.21"
+  depends_on = [module.eks]
+  source     = "aws-ia/eks-blueprints-addons/aws"
+  version    = "~> 1.21"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
