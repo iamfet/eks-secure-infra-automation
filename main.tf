@@ -90,10 +90,10 @@ module "eks" {
 
   eks_managed_node_groups = {
     dev = {
-      instance_types = ["m5.xlarge"]
-      min_size       = 1
+      instance_types = ["t2.large"]
+      min_size       = 2
       max_size       = 6
-      desired_size   = 2
+      desired_size   = 3
     }
   }
 
@@ -146,9 +146,9 @@ module "eks_blueprints_addons" {
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
+  enable_external_secrets             = true
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
-  enable_external_secrets             = true
   enable_cluster_autoscaler           = true
 
   cluster_autoscaler = {
