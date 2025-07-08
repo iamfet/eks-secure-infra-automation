@@ -41,7 +41,7 @@ resource "aws_security_group" "istio-gateway-lb" {
   vpc_id = module.vpc.vpc_id
 }
 
-resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_ipv4" {
+resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_http" {
   security_group_id = aws_security_group.istio-gateway-lb.id
   cidr_ipv4         = module.vpc.vpc_cidr_block
   from_port         = 80
@@ -49,7 +49,7 @@ resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_ipv4" {
   to_port           = 80
 }
 
-resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_ipv4" {
+resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_https" {
   security_group_id = aws_security_group.istio-gateway-lb.id
   cidr_ipv4         = module.vpc.vpc_cidr_block
   from_port         = 443
