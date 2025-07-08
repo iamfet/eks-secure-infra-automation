@@ -6,7 +6,7 @@ resource "helm_release" "istio-base" {
   version          = "1.26.2"
   create_namespace = true
   namespace        = "istio-system"
-  depends_on       = [module.eks, module.vpc]
+  depends_on = [module.eks_blueprints_addons]
 }
 
 # 2. Install istiod second (control plane)
