@@ -52,7 +52,7 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   create_cluster_security_group = false
-  create_node_security_group    = false
+  create_node_security_group    = true
 
   cluster_addons = {
     coredns                = {}
