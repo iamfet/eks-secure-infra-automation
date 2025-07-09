@@ -37,8 +37,8 @@ resource "helm_release" "istio-ingressgateway" {
 }
 
 resource "aws_security_group" "istio-gateway-lb" {
-  name   = "istio-gateway-lb"
-  vpc_id = module.vpc.vpc_id
+  name       = "istio-gateway-lb"
+  vpc_id     = module.vpc.vpc_id
   depends_on = [module.vpc]
 }
 

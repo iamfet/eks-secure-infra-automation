@@ -68,7 +68,7 @@ resource "aws_iam_role_policy" "external-developer-eks-access" {
 
 # role to access AWS secrets manager
 resource "aws_iam_role" "externalsecrets-role" {
-  name = "externalsecrets_sa_role"
+  name       = "externalsecrets_sa_role"
   depends_on = [module.eks]
 
   assume_role_policy = jsonencode({

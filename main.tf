@@ -100,7 +100,7 @@ module "eks" {
     }
   }
 
- node_security_group_additional_rules = {
+  node_security_group_additional_rules = {
 
     #Enables automatic sidecar injection when pods are created
     ingress_15017 = {
