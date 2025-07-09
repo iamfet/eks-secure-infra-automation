@@ -9,7 +9,7 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.0"
+  version = " ~> 5.21"
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -41,7 +41,7 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.37"
+  version = "~> 20.36"
 
   cluster_name    = "${var.project_name}-eks-cluster"
   cluster_version = var.cluster_version
@@ -102,7 +102,7 @@ module "eks" {
 
   node_security_group_additional_rules = {
 
-
+    
   }
 
   tags = {
