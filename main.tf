@@ -41,7 +41,7 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.36"
+  version = "~> 20.37"
 
   cluster_name    = "${var.project_name}-eks-cluster"
   cluster_version = var.cluster_version
@@ -51,8 +51,11 @@ module "eks" {
 
   cluster_endpoint_public_access = true
 
-  create_cluster_security_group = false
+  create_cluster_security_group = true
   create_node_security_group    = true
+
+  # Ensure proper dependency order
+  depends_on = [module.vpc]
 
   cluster_addons = {
     coredns                = {}
