@@ -55,7 +55,7 @@ module "eks" {
   create_node_security_group    = true
 
   # Ensure proper dependency order
-  depends_on = [module.vpc]
+  depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   cluster_addons = {
     coredns                = {}
@@ -100,7 +100,30 @@ module "eks" {
     }
   }
 
+ node_security_group_additional_rules = {
 
+    #Enables automatic sidecar injection when pods are created
+    ingress_15017 = {
+      description                   = "Cluster API to Istio Webhook namespace.sidecar-injector.istio.io"
+      protocol                      = "TCP"
+      from_port                     = 15017
+      to_port                       = 15017
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
+
+    #Enables service discovery and configuration distribution
+    ingress_15012 = {
+      description                   = "Cluster API to nodes ports/protocols"
+      protocol                      = "TCP"
+      from_port                     = 15012
+      to_port                       = 15012
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
+
+
+  }
 
   tags = {
     environment = "development"
@@ -127,7 +150,7 @@ module "eks_blueprints_addons" {
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
   enable_cluster_autoscaler           = true
-  enable_external_secrets             = true
+  enable_external_secrets             = false
 
   cluster_autoscaler = {
     set = [

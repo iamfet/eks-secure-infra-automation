@@ -28,7 +28,7 @@ resource "helm_release" "istio-ingressgateway" {
   version          = "1.26.2"
   create_namespace = true
   namespace        = "istio-gateway"
-  depends_on       = [helm_release.istiod]
+  depends_on       = [helm_release.istiod, aws_security_group.istio-gateway-lb]
 
   values = [
     templatefile("${path.module}/istio-gateway-values.yaml.tfpl",
@@ -39,6 +39,7 @@ resource "helm_release" "istio-ingressgateway" {
 resource "aws_security_group" "istio-gateway-lb" {
   name   = "istio-gateway-lb"
   vpc_id = module.vpc.vpc_id
+  depends_on = [module.vpc]
 }
 
 resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_http" {
