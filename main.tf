@@ -97,6 +97,9 @@ module "eks" {
     }
   }
 
+  # Wait for security group to be fully created
+  depends_on = [aws_security_group.istio-gateway-lb]
+  
   node_security_group_additional_rules = {
 
     #Enables automatic sidecar injection when pods are created
