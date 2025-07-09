@@ -9,7 +9,7 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = " ~> 5.21"
+  version = " ~> 6.0"
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -41,7 +41,7 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.36"
+  version = "~> 20.37"
 
   cluster_name    = "${var.project_name}-eks-cluster"
   cluster_version = var.cluster_version
@@ -102,35 +102,7 @@ module "eks" {
 
   node_security_group_additional_rules = {
 
-    #Enables automatic sidecar injection when pods are created
-    ingress_15017 = {
-      description                   = "Cluster API to Istio Webhook namespace.sidecar-injector.istio.io"
-      protocol                      = "TCP"
-      from_port                     = 15017
-      to_port                       = 15017
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
 
-    #Enables service discovery and configuration distribution
-    ingress_15012 = {
-      description                   = "Cluster API to nodes ports/protocols"
-      protocol                      = "TCP"
-      from_port                     = 15012
-      to_port                       = 15012
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
-
-    #Enables external traffic to reach Istio gateway through load balancer
-    ingress_istio_sg = {
-      description              = "LB port forward to nodes"
-      protocol                 = "TCP"
-      from_port                = 30000
-      to_port                  = 32767
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.istio-gateway-lb.id
-    }
   }
 
   tags = {
