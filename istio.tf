@@ -34,26 +34,6 @@ resource "helm_release" "istio-ingressgateway" {
     templatefile("${path.module}/istio-gateway-values.yaml.tfpl",
     { lb_security_group_id = aws_security_group.istio-gateway-lb.id })
   ]
-
-  set {
-    name  = "replicaCount"
-    value = "2"
-  }
-
-  set {
-    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight"
-    value = "100"
-  }
-
-  set {
-    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.labelSelector.matchLabels.app"
-    value = "istio-ingressgateway"
-  }
-
-  set {
-    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey"
-    value = "kubernetes.io/hostname"
-  }
 }
 
 resource "aws_security_group" "istio-gateway-lb" {
@@ -90,24 +70,13 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
   ip_protocol       = "-1"
 }
 
-# Allow load balancer to reach worker nodes for health checks
-resource "aws_vpc_security_group_ingress_rule" "nodes_from_lb_health" {
-  security_group_id            = module.eks.node_security_group_id
-  referenced_security_group_id = aws_security_group.istio-gateway-lb.id
-  from_port                    = 15021
-  to_port                      = 15021
-  ip_protocol                  = "tcp"
-  description                  = "Istio gateway health check"
-  depends_on                   = [module.eks]
-}
-
-# Allow load balancer to reach worker nodes for HTTP/HTTPS traffic
-resource "aws_vpc_security_group_ingress_rule" "nodes_from_lb_nodeport" {
+# Allow traffic from Istio gateway load balancer to EKS nodes
+resource "aws_vpc_security_group_ingress_rule" "eks_nodes_from_istio_lb" {
   security_group_id            = module.eks.node_security_group_id
   referenced_security_group_id = aws_security_group.istio-gateway-lb.id
   from_port                    = 30000
   to_port                      = 32767
   ip_protocol                  = "tcp"
-  description                  = "NodePort range for Istio gateway HTTP/HTTPS"
-  depends_on                   = [module.eks]
+  description                  = "LB port forward to nodes"
+  depends_on                   = [module.eks, aws_security_group.istio-gateway-lb]
 }
