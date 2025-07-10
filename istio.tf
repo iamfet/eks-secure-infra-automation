@@ -70,3 +70,24 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
   ip_protocol       = "-1"
 }
 
+# Allow load balancer to reach worker nodes for health checks
+resource "aws_vpc_security_group_ingress_rule" "nodes_from_lb_health" {
+  security_group_id            = module.eks.node_security_group_id
+  referenced_security_group_id = aws_security_group.istio-gateway-lb.id
+  from_port                    = 15021
+  to_port                      = 15021
+  ip_protocol                  = "tcp"
+  description                  = "Istio gateway health check"
+  depends_on                   = [module.eks]
+}
+
+# Allow load balancer to reach worker nodes for HTTP/HTTPS traffic
+resource "aws_vpc_security_group_ingress_rule" "nodes_from_lb_nodeport" {
+  security_group_id            = module.eks.node_security_group_id
+  referenced_security_group_id = aws_security_group.istio-gateway-lb.id
+  from_port                    = 30000
+  to_port                      = 32767
+  ip_protocol                  = "tcp"
+  description                  = "NodePort range for Istio gateway HTTP/HTTPS"
+  depends_on                   = [module.eks]
+}
