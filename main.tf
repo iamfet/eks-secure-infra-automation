@@ -95,7 +95,7 @@ module "eks" {
     dev = {
       instance_types = ["t2.large"]
       min_size       = 2
-      max_size       = 5
+      max_size       = 6
       desired_size   = 3
     }
   }
@@ -159,7 +159,7 @@ module "eks_blueprints_addons" {
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
   enable_cluster_autoscaler           = true
-  enable_external_secrets             = true
+  enable_external_secrets             = false
 
   cluster_autoscaler = {
     set = [
