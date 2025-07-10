@@ -41,12 +41,17 @@ resource "helm_release" "istio-ingressgateway" {
   }
 
   set {
-    name  = "affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchLabels.app"
+    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight"
+    value = "100"
+  }
+
+  set {
+    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.labelSelector.matchLabels.app"
     value = "istio-ingressgateway"
   }
 
   set {
-    name  = "affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].topologyKey"
+    name  = "affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey"
     value = "kubernetes.io/hostname"
   }
 }
