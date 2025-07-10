@@ -34,6 +34,21 @@ resource "helm_release" "istio-ingressgateway" {
     templatefile("${path.module}/istio-gateway-values.yaml.tfpl",
     { lb_security_group_id = aws_security_group.istio-gateway-lb.id })
   ]
+
+  set {
+    name  = "replicaCount"
+    value = "2"
+  }
+
+  set {
+    name  = "affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchLabels.app"
+    value = "istio-ingressgateway"
+  }
+
+  set {
+    name  = "affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].topologyKey"
+    value = "kubernetes.io/hostname"
+  }
 }
 
 resource "aws_security_group" "istio-gateway-lb" {
