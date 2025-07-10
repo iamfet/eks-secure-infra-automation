@@ -28,7 +28,7 @@ resource "helm_release" "istio-ingressgateway" {
   version          = "1.26.2"
   create_namespace = true
   namespace        = "istio-gateway"
-  depends_on       = [helm_release.istiod, aws_security_group.istio-gateway-lb]
+  depends_on       = [helm_release.istiod]
 
   values = [
     templatefile("${path.module}/istio-gateway-values.yaml.tfpl",
@@ -68,15 +68,4 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
   security_group_id = aws_security_group.istio-gateway-lb.id
   cidr_ipv6         = "::/0"
   ip_protocol       = "-1"
-}
-
-# Allow traffic from Istio gateway load balancer to EKS nodes
-resource "aws_vpc_security_group_ingress_rule" "eks_nodes_from_istio_lb" {
-  security_group_id            = module.eks.node_security_group_id
-  referenced_security_group_id = aws_security_group.istio-gateway-lb.id
-  from_port                    = 30000
-  to_port                      = 32767
-  ip_protocol                  = "tcp"
-  description                  = "LB port forward to nodes"
-  depends_on                   = [module.eks, aws_security_group.istio-gateway-lb]
 }

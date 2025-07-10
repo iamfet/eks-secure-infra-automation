@@ -122,6 +122,15 @@ module "eks" {
       source_cluster_security_group = true
     }
 
+    # Allow traffic from Istio gateway load balancer to EKS nodes
+    ingress_istio_gateway = {
+      description              = "Istio Gateway LoadBalancer to nodes"
+      protocol                 = "TCP"
+      from_port                = 30000
+      to_port                  = 32767
+      type                     = "ingress"
+      source_security_group_id = aws_security_group.istio-gateway-lb.id
+    }
 
   }
 
