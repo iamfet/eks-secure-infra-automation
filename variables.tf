@@ -19,7 +19,7 @@ variable "public_subnets_cidr" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "online-boutique"
+  default     = "clothing-store"
 }
 
 variable "cluster_version" {
