@@ -66,6 +66,22 @@ resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_healthcheck" {
   to_port           = 15021
 }
 
+resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_http_high" {
+  security_group_id = aws_security_group.istio-gateway-lb.id
+  cidr_ipv4         = module.vpc.vpc_cidr_block
+  from_port         = 8080
+  ip_protocol       = "tcp"
+  to_port           = 8080
+}
+
+resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_https_high" {
+  security_group_id = aws_security_group.istio-gateway-lb.id
+  cidr_ipv4         = module.vpc.vpc_cidr_block
+  from_port         = 8443
+  ip_protocol       = "tcp"
+  to_port           = 8443
+}
+
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
   security_group_id = aws_security_group.istio-gateway-lb.id
   cidr_ipv4         = "0.0.0.0/0"
