@@ -8,4 +8,8 @@ output "cluster_endpoint" {
   value       = module.eks.cluster_endpoint
 }
 
+output "istio_ingress_nlb_sg_id" {
+  value       = aws_security_group.istio_ingress_nlb.id
+  description = "Security group ID for the Istio ingress NLB"
+}
 
