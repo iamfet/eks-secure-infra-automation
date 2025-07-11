@@ -52,7 +52,7 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   create_cluster_security_group = false
-  create_node_security_group    = true
+  create_node_security_group    = false
 
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
@@ -122,15 +122,6 @@ module "eks" {
       source_cluster_security_group = true
     }
 
-    # Allow traffic from Istio gateway load balancer to EKS nodes
-    ingress_istio_gateway = {
-      description              = "Istio Gateway LoadBalancer to nodes"
-      protocol                 = "TCP"
-      from_port                = 30000
-      to_port                  = 32767
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.istio-gateway-lb.id
-    }
   }
 
   tags = {
