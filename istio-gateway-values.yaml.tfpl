@@ -22,3 +22,8 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-attributes: "load_balancing.cross_zone.enabled=true"
     service.beta.kubernetes.io/aws-load-balancer-security-groups: "${lb_security_group_id}"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+
+containerPorts:
+  status-port: 15021
+  http2: 80
+  https: 443

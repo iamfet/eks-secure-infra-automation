@@ -95,7 +95,7 @@ module "eks" {
     dev = {
       instance_types = ["t2.large"]
       min_size       = 2
-      max_size       = 6
+      max_size       = 5
       desired_size   = 3
     }
   }
@@ -131,7 +131,6 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = aws_security_group.istio-gateway-lb.id
     }
-
   }
 
   tags = {
@@ -177,5 +176,4 @@ module "eks_blueprints_addons" {
       }
     ]
   }
-
 }
