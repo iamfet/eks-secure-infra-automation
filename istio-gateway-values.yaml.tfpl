@@ -4,6 +4,10 @@ labels:
 service:
   type: LoadBalancer
   ports:
+    - name: status-port
+      port: 15021
+      targetPort: 15021
+      protocol: TCP
     - name: http2
       port: 80
       targetPort: 80
@@ -17,3 +21,4 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
     service.beta.kubernetes.io/aws-load-balancer-attributes: "load_balancing.cross_zone.enabled=true"
     service.beta.kubernetes.io/aws-load-balancer-security-groups: "${lb_security_group_id}"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
