@@ -55,7 +55,7 @@ module "eks" {
   create_node_security_group    = false
 
   # Ensure proper dependency order
-  depends_on = [module.vpc, aws_security_group.istio_gateway_lb, aws_iam_role.external-admin, aws_iam_role.external-developer]
+  depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   cluster_addons = {
     coredns                = {}
