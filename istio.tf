@@ -68,15 +68,15 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
   description       = "Allow HTTPS from anywhere"
 }
 
-# Allow Istio health checks (required for NLB -> Istio pods)
-#resource "aws_vpc_security_group_ingress_rule" "health_check" {
-#  security_group_id = aws_security_group.istio_gateway_lb.id
-#  cidr_ipv4         = module.vpc.vpc_cidr_block
-#  from_port         = 15021
-#  to_port           = 15021
-#  ip_protocol       = "tcp"
-#  description       = "Allow HTTPS from anywhere"
-#}
+#Allow Istio health checks (required for NLB -> Istio pods)
+resource "aws_vpc_security_group_ingress_rule" "health_check" {
+  security_group_id = aws_security_group.istio_gateway_lb.id
+  cidr_ipv4         = module.vpc.vpc_cidr_block
+  from_port         = 15021
+  to_port           = 15021
+  ip_protocol       = "tcp"
+  description       = "Allow HTTPS from anywhere"
+}
 
 # Egress: Allow all IPv4 outbound traffic
 resource "aws_vpc_security_group_egress_rule" "all_ipv4" {
