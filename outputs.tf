@@ -13,3 +13,7 @@ output "istio_ingress_nlb_sg_id" {
   description = "Security group ID for the Istio ingress NLB"
 }
 
+output "istio_ingress_nlb_sg_id" {
+  value       = aws_security_group.istio_gateway_lb.id
+  description = "Security group ID for the Istio ingress NLB"
+}
