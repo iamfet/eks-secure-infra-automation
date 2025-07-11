@@ -69,7 +69,7 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
 }
 
 # Allow Istio health checks (required for NLB -> Istio pods)
-resource "aws_vpc_security_group_ingress_rule" "https" {
+resource "aws_vpc_security_group_ingress_rule" "health_check" {
   security_group_id = aws_security_group.istio_gateway_lb.id
   cidr_ipv4         = module.vpc.vpc_cidr_block
   from_port         = 15021
