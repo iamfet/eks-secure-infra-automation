@@ -31,8 +31,7 @@ resource "helm_release" "istio-ingressgateway" {
   depends_on       = [helm_release.istiod]
 
   values = [
-    templatefile("${path.module}/istio-gateway-values.yaml.tfpl",
-    { lb_security_group_id = aws_security_group.istio_gateway_lb.id })
+    file("${path.module}/istio-gateway-values.yaml.tfpl")
   ]
 }
 
