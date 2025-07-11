@@ -3,10 +3,10 @@ name: Deploy Infrastructure
 on:
   push:
     branches: [main]
-    paths: ["**.tf"]
+    paths: ["**.tf", "**.tfpl"]
   pull_request:
     branches: [main]
-    paths: ["**.tf"]
+    paths: ["**.tf", "**.tfpl"]
 
 env:
   TF_VERSION: "1.12.0"

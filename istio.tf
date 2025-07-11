@@ -40,6 +40,7 @@ resource "aws_security_group" "istio-gateway-lb" {
   name       = "istio-gateway-lb"
   vpc_id     = module.vpc.vpc_id
   depends_on = [module.vpc]
+  # Updated health check configuration
 }
 
 resource "aws_vpc_security_group_ingress_rule" "istio-gateway-lb_http" {
