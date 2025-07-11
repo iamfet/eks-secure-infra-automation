@@ -8,6 +8,7 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "TCP"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "15021"
     service.beta.kubernetes.io/aws-load-balancer-security-groups: "${lb_security_group_id}"
   ports:
     - name: http2
