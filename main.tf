@@ -55,7 +55,7 @@ module "eks" {
   create_node_security_group    = false
 
   # Ensure proper dependency order
-  depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
+  depends_on = [module.vpc, aws_security_group.istio_gateway_lb, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   cluster_addons = {
     coredns                = {}
@@ -122,35 +122,7 @@ module "eks" {
       source_cluster_security_group = true
     }
 
-    # Allow load balancer to reach Istio gateway health check port
-    ingress_istio_health = {
-      description              = "Load balancer to Istio gateway health check"
-      protocol                 = "TCP"
-      from_port                = 15021
-      to_port                  = 15021
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.istio-gateway-lb.id
-    }
 
-    # Allow load balancer to reach Istio gateway HTTP port
-    ingress_istio_http = {
-      description              = "Load balancer to Istio gateway HTTP"
-      protocol                 = "TCP"
-      from_port                = 8080
-      to_port                  = 8080
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.istio-gateway-lb.id
-    }
-
-    # Allow load balancer to reach Istio gateway HTTPS port
-    ingress_istio_https = {
-      description              = "Load balancer to Istio gateway HTTPS"
-      protocol                 = "TCP"
-      from_port                = 8443
-      to_port                  = 8443
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.istio-gateway-lb.id
-    }
 
   }
 
