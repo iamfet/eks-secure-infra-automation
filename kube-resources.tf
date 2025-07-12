@@ -105,6 +105,13 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["ingresses"]
     verbs      = ["get", "list", "watch"]
   }
+
+  # Required for istioctl proxy-status and other Istio CLI commands
+  rule {
+    api_groups = [""]
+    resources  = ["serviceaccounts/token"]
+    verbs      = ["create"]
+  }
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_viewer" {
