@@ -99,6 +99,12 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["customresourcedefinitions"]
     verbs      = ["get", "list"]
   }
+  
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingresses"]
+    verbs      = ["get", "list", "watch"]
+  }
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_viewer" {
