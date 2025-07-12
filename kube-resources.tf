@@ -112,6 +112,13 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["serviceaccounts/token"]
     verbs      = ["create"]
   }
+
+  # Istio security resources
+  rule {
+    api_groups = ["security.istio.io"]
+    resources  = ["*"]
+    verbs      = ["get", "list", "watch"]
+  }
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_viewer" {
