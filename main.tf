@@ -51,9 +51,6 @@ module "eks" {
 
   cluster_endpoint_public_access = true
 
-  create_cluster_security_group = false
-  create_node_security_group    = false
-
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
@@ -121,9 +118,6 @@ module "eks" {
       type                          = "ingress"
       source_cluster_security_group = true
     }
-
-
-
   }
 
   tags = {
