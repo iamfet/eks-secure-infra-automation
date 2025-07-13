@@ -145,7 +145,7 @@ module "eks_blueprints_addons" {
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
   enable_cluster_autoscaler           = true
-  enable_external_secrets             = true
+  enable_external_secrets             = false
 
   cluster_autoscaler = {
     set = [
