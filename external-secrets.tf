@@ -64,6 +64,19 @@ module "external_secrets_irsa" {
 #  })
 #}
 
+#resource "kubernetes_service_account" "externalsecrets-sa" {
+#  depends_on = [aws_iam_role.externalsecrets-role, kubernetes_namespace.online-boutique]
+#  metadata {
+#    name      = "externalsecrets-sa"
+#    namespace = "online-boutique"
+#
+#    # maps the IAM Role to the Kubernetes Service Account
+#    annotations = {
+#      "eks.amazonaws.com/role-arn" = aws_iam_role.externalsecrets-role.arn
+#    }
+#  }
+#}
+
 
 resource "helm_release" "external-secrets" {
   name             = "external-secrets"

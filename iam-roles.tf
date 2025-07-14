@@ -17,7 +17,7 @@ resource "aws_iam_role" "external-admin" {
 }
 
 resource "aws_iam_role_policy" "external-admin-eks-access" {
-  name = "eks-read-only-access"
+  name = "eks-admin-read-only-access"
   role = aws_iam_role.external-admin.id
 
   policy = jsonencode({
@@ -51,7 +51,7 @@ resource "aws_iam_role" "external-developer" {
 }
 
 resource "aws_iam_role_policy" "external-developer-eks-access" {
-  name = "eks-read-only-access"
+  name = "eks-developer-readonly-access"
   role = aws_iam_role.external-developer.id
 
   policy = jsonencode({
