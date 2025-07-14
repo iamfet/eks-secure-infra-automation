@@ -5,6 +5,7 @@ module "cluster_autoscaler_irsa" {
 
   role_name                        = "${var.project_name}-cluster-autoscaler-irsa"
   attach_cluster_autoscaler_policy = true
+  cluster_autoscaler_cluster_names = ["${var.project_name}-eks-cluster"]
 
   oidc_providers = {
     main = {
