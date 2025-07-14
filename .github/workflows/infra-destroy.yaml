@@ -63,9 +63,10 @@ jobs:
           kubectl delete appprojects.argoproj.io --all -n argocd || true
         continue-on-error: true
       
-      - name: Release state lock
-        run: terraform force-unlock -force 46467026-eb57-b2b2-7ba6-060404cfdc23
-        continue-on-error: true
+      - name: update kubconfig
+        run: |
+          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ vars.AWS_REGION }}
+        
         
       - name: Terraform Refresh
         run: |
