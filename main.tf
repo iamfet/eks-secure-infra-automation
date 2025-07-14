@@ -94,9 +94,9 @@ module "eks" {
       min_size       = 2
       max_size       = 6
       desired_size   = 3
-      
+
       tags = {
-        "k8s.io/cluster-autoscaler/enabled" = "true"
+        "k8s.io/cluster-autoscaler/enabled"                         = "true"
         "k8s.io/cluster-autoscaler/${var.project_name}-eks-cluster" = "owned"
       }
     }
