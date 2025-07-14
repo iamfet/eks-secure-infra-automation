@@ -65,6 +65,7 @@ jobs:
 
       - name: Terraform Destroy
         run: |
+          terraform refresh \
           terraform destroy \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
