@@ -63,20 +63,6 @@ jobs:
           kubectl delete appprojects.argoproj.io --all -n argocd || true
         continue-on-error: true
       
-      - name: update kubconfig
-        run: |
-          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ vars.AWS_REGION }}
-        
-        
-      - name: Terraform Refresh
-        run: |
-          terraform refresh \
-            -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
-            -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
-            -var="gitops_url=${{ secrets.GITOPS_URL }}" \
-            -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
-            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
-      
       - name: Terraform Destroy
         run: |
           terraform destroy \
