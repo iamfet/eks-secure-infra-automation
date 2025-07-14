@@ -55,7 +55,7 @@ module "eks" {
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   cluster_addons = {
-    coredns                = {}
+    #coredns                = {}
     eks-pod-identity-agent = {}
     kube-proxy             = {}
     vpc-cni                = {}
