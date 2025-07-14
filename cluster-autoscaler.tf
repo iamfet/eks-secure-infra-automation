@@ -78,7 +78,7 @@ resource "helm_release" "cluster-autoscaler" {
   name       = "cluster-autoscaler"
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
-  version    = "9.43.2"
+  version    = "9.48.0"
   namespace  = "kube-system"
   depends_on = [module.cluster_autoscaler_irsa, module.eks]
 
