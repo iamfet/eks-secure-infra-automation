@@ -54,12 +54,12 @@ module "eks" {
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
-  #cluster_addons = {
-  #  coredns                = {}
-  #  eks-pod-identity-agent = {}
-  #  kube-proxy             = {}
-  #  vpc-cni                = {}
-  #}
+  cluster_addons = {
+    coredns                = {}
+    eks-pod-identity-agent = {}
+    kube-proxy             = {}
+    vpc-cni                = {}
+  }
 
 
   # Set authentication mode to API
