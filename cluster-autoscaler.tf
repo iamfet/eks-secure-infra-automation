@@ -1,9 +1,9 @@
 #Create the IAM Role for Service Account for cluster autoscaler
 module "cluster_autoscaler_irsa" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.59"
 
-  role_name = "${var.project_name}-cluster-autoscaler-irsa"
+  role_name                        = "${var.project_name}-cluster-autoscaler-irsa"
   attach_cluster_autoscaler_policy = true
 
   oidc_providers = {
@@ -75,12 +75,12 @@ module "cluster_autoscaler_irsa" {
 #}
 
 resource "helm_release" "cluster-autoscaler" {
-  name             = "cluster-autoscaler"
-  repository       = "https://kubernetes.github.io/autoscaler"
-  chart            = "cluster-autoscaler"
-  version          = "9.43.2"
-  namespace        = "kube-system"
-  depends_on       = [module.cluster_autoscaler_irsa]
+  name       = "cluster-autoscaler"
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+  version    = "9.43.2"
+  namespace  = "kube-system"
+  depends_on = [module.cluster_autoscaler_irsa]
 
   set {
     name  = "autoDiscovery.clusterName"
@@ -106,7 +106,7 @@ resource "helm_release" "cluster-autoscaler" {
     name  = "extraArgs.skip-nodes-with-system-pods"
     value = "false"
   }
-  
+
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = module.cluster_autoscaler_irsa.iam_role_arn
