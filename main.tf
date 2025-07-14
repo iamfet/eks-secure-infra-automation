@@ -92,7 +92,7 @@ module "eks" {
     dev = {
       instance_types = ["t2.large"]
       min_size       = 2
-      max_size       = 5
+      max_size       = 6
       desired_size   = 3
     }
   }
@@ -146,6 +146,5 @@ module "eks_blueprints_addons" {
   enable_metrics_server               = false
   enable_cluster_autoscaler           = false
   enable_external_secrets             = false
-
 
 }
