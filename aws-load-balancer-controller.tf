@@ -22,7 +22,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  version    = "1.11.0"
+  version    = "1.13.3"
   namespace  = "kube-system"
   depends_on = [module.aws_load_balancer_controller_irsa, module.eks]
 
@@ -38,7 +38,7 @@ resource "helm_release" "aws-load-balancer-controller" {
 
   set {
     name  = "serviceAccount.create"
-    value = "true"
+    value = "false"
   }
 
   set {
