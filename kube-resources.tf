@@ -18,7 +18,7 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_namespace" "online-boutique" {
-  depends_on = [module.eks_blueprints_addons]
+  depends_on = [module.eks]
   metadata {
     name = "online-boutique"
     labels = {
