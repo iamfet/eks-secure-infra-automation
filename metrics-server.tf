@@ -5,5 +5,5 @@ resource "helm_release" "metrics-server" {
   version          = "3.12.2"
   namespace        = "kube-system"
   create_namespace = false
-  depends_on       = [module.eks, helm_release.aws-load-balancer-controller]
+  depends_on       = [module.eks]
 }
