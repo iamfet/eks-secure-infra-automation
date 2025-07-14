@@ -107,6 +107,17 @@ resource "helm_release" "cluster-autoscaler" {
     value = "false"
   }
 
+
+  set {
+    name  = "serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "cluster-autoscaler"
+  }
+
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = module.cluster_autoscaler_irsa.iam_role_arn

@@ -6,4 +6,6 @@ resource "helm_release" "metrics-server" {
   namespace        = "kube-system"
   create_namespace = false
   depends_on       = [module.eks]
+
+
 }

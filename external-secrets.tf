@@ -8,7 +8,7 @@ module "external_secrets_irsa" {
   oidc_providers = {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["external-secrets:external-secrets"]
+      namespace_service_accounts = ["external-secrets-system:external-secrets"]
     }
   }
 
@@ -71,9 +71,18 @@ resource "helm_release" "external-secrets" {
   chart            = "external-secrets"
   version          = "0.18.2"
   create_namespace = true
-  namespace        = "external-secrets"
+  namespace        = "external-secrets-system"
   depends_on       = [module.external_secrets_irsa]
 
+  set {
+    name  = "serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "external-secrets"
+  }
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = module.external_secrets_irsa.iam_role_arn

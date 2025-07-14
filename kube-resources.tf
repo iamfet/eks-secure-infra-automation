@@ -139,17 +139,3 @@ resource "kubernetes_cluster_role_binding" "cluster_viewer" {
     api_group = "rbac.authorization.k8s.io"
   }
 }
-
-# service account to assume aws externalsecrets-role to fetch secret
-resource "kubernetes_service_account" "externalsecrets-sa" {
-  depends_on = [aws_iam_role.externalsecrets-role, kubernetes_namespace.online-boutique]
-  metadata {
-    name      = "externalsecrets-sa"
-    namespace = "online-boutique"
-
-    # maps the IAM Role to the Kubernetes Service Account
-    annotations = {
-      "eks.amazonaws.com/role-arn" = aws_iam_role.externalsecrets-role.arn
-    }
-  }
-}
