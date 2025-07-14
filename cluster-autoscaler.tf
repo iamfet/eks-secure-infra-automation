@@ -80,7 +80,7 @@ resource "helm_release" "cluster-autoscaler" {
   chart      = "cluster-autoscaler"
   version    = "9.43.2"
   namespace  = "kube-system"
-  depends_on = [module.cluster_autoscaler_irsa]
+  depends_on = [module.cluster_autoscaler_irsa, module.eks]
 
   set {
     name  = "autoDiscovery.clusterName"

@@ -2,7 +2,7 @@ module "external_secrets_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.59"
 
-  role_name                      = "${var.project_name}-external_secrets-irsa"
+  role_name                      = "${var.project_name}-external-secrets-irsa"
   attach_external_secrets_policy = true
 
   oidc_providers = {
@@ -72,7 +72,7 @@ resource "helm_release" "external-secrets" {
   version          = "0.18.2"
   create_namespace = true
   namespace        = "external-secrets-system"
-  depends_on       = [module.external_secrets_irsa]
+  depends_on       = [module.external_secrets_irsa, module.eks]
 
   set {
     name  = "serviceAccount.create"
