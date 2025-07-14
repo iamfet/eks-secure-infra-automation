@@ -143,24 +143,9 @@ module "eks_blueprints_addons" {
   }
 
   enable_aws_load_balancer_controller = true
-  enable_metrics_server               = true
-  enable_cluster_autoscaler           = true
+  enable_metrics_server               = false
+  enable_cluster_autoscaler           = false
   enable_external_secrets             = false
 
-  cluster_autoscaler = {
-    set = [
-      {
-        name  = "extraArgs.scale-down-unneeded-time"
-        value = "2m"
-      },
-      {
-        name  = "extraArgs.skip-nodes-with-local-storage"
-        value = false
-      },
-      {
-        name  = "extraArgs.skip-nodes-with-system-pods"
-        value = false
-      }
-    ]
-  }
+
 }
