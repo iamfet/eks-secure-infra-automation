@@ -62,10 +62,13 @@ jobs:
           kubectl delete applications.argoproj.io --all -n argocd || true
           kubectl delete appprojects.argoproj.io --all -n argocd || true
         continue-on-error: true
-
-      - name: Terraform Destroy
+      
+      - name: Terraform Refresh
         run: |
           terraform refresh \
+      
+      - name: Terraform Destroy
+        run: |
           terraform destroy \
             -var="user_for_admin_role=${{ secrets.ADMIN_USER_ARN }}" \
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
