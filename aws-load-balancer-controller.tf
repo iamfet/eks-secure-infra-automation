@@ -13,8 +13,8 @@ module "aws_load_balancer_controller_irsa" {
   }
 
   tags = {
-    "Environment" = "dev"
-    "Terraform"   = "true"
+    Environment = "dev"
+    Terraform   = "true"
   }
 }
 
@@ -25,8 +25,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   version    = "1.13.3"
   namespace  = "kube-system"
   depends_on = [module.eks, module.aws_load_balancer_controller_irsa]
-  
-  # Wait for resources to be ready before marking the release as successful
+
   wait = true
 
   set = [
@@ -51,5 +50,4 @@ resource "helm_release" "aws-load-balancer-controller" {
       value = module.aws_load_balancer_controller_irsa.iam_role_arn
     }
   ]
-
 }

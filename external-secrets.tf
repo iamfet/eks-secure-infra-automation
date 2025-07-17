@@ -87,6 +87,8 @@ resource "helm_release" "external-secrets" {
   namespace        = "external-secrets-system"
   depends_on       = [module.eks, helm_release.aws-load-balancer-controller, module.external_secrets_irsa]
 
+  wait = true
+
   set = [
     {
       name  = "serviceAccount.create"
