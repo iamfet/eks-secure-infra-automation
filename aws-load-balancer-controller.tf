@@ -26,8 +26,8 @@ resource "helm_release" "aws-load-balancer-controller" {
   namespace  = "kube-system"
   depends_on = [module.eks, module.aws_load_balancer_controller_irsa]
   
-  # Add timeout to ensure proper installation
-  timeout = 300
+  # Wait for resources to be ready before marking the release as successful
+  wait = true
 
   set = [
     {
