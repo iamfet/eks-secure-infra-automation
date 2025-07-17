@@ -6,7 +6,7 @@ resource "helm_release" "istio-base" {
   version          = "1.26.2"
   create_namespace = true
   namespace        = "istio-system"
-  depends_on       = [module.eks, helm_release.aws-load-balancer-controller]
+  depends_on       = [module.eks, helm_release.aws-load-balancer-controller, helm_release.external-secrets]
 }
 
 # 2. Install istiod second (control plane)
