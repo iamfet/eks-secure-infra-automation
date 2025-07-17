@@ -83,45 +83,39 @@ resource "helm_release" "cluster-autoscaler" {
   namespace  = "kube-system"
   depends_on = [module.cluster_autoscaler_irsa, module.eks, helm_release.aws-load-balancer-controller]
 
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = module.eks.cluster_name
-  }
-
-  set {
-    name  = "awsRegion"
-    value = var.aws_region
-  }
-
-  set {
-    name  = "extraArgs.scale-down-unneeded-time"
-    value = "2m"
-  }
-
-  set {
-    name  = "extraArgs.skip-nodes-with-local-storage"
-    value = "false"
-  }
-
-  set {
-    name  = "extraArgs.skip-nodes-with-system-pods"
-    value = "false"
-  }
-
-
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = "cluster-autoscaler"
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.cluster_autoscaler_irsa.iam_role_arn
-  }
+  set = [
+    {
+      name  = "autoDiscovery.clusterName"
+      value = module.eks.cluster_name
+    },
+    {
+      name  = "awsRegion"
+      value = var.aws_region
+    },
+    {
+      name  = "extraArgs.scale-down-unneeded-time"
+      value = "2m"
+    },
+    {
+      name  = "extraArgs.skip-nodes-with-local-storage"
+      value = "false"
+    },
+    {
+      name  = "extraArgs.skip-nodes-with-system-pods"
+      value = "false"
+    },
+    {
+      name  = "serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "serviceAccount.name"
+      value = "cluster-autoscaler"
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.cluster_autoscaler_irsa.iam_role_arn
+    }
+  ]
 
 }
