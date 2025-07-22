@@ -19,6 +19,7 @@ module "cluster_autoscaler_irsa" {
   }
 }
 
+
 resource "helm_release" "cluster_autoscaler" {
   name       = "cluster-autoscaler"
   repository = "https://kubernetes.github.io/autoscaler"
