@@ -5,5 +5,5 @@ resource "helm_release" "opa-gatekeeper" {
   version          = "3.19.2"
   create_namespace = true
   namespace        = "gatekeeper-system"
-  depends_on       = [module.eks, helm_release.istiod]
+  depends_on       = [module.eks, helm_release.istio_prometheus]
 }
