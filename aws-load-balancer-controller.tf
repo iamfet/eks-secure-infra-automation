@@ -1,53 +1,41 @@
-module "cluster_autoscaler_irsa" {
+module "aws_load_balancer_controller_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.59"
 
-  role_name                        = "${var.project_name}-cluster-autoscaler-irsa"
-  attach_cluster_autoscaler_policy = true
-  cluster_autoscaler_cluster_names = ["${var.project_name}-eks-cluster"]
+  role_name                              = "${var.project_name}-aws-load-balancer-controller-irsa"
+  attach_load_balancer_controller_policy = true
 
   oidc_providers = {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+      namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
   }
 
   tags = {
-    "Environment" = "dev"
-    "Terraform"   = "true"
+    Environment = "dev"
+    Terraform   = "true"
   }
 }
 
-
-resource "helm_release" "cluster-autoscaler" {
-  name       = "cluster-autoscaler"
-  repository = "https://kubernetes.github.io/autoscaler"
-  chart      = "cluster-autoscaler"
-  version    = "9.48.0"
+resource "helm_release" "aws-load-balancer-controller" {
+  name       = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  version    = "1.13.3"
   namespace  = "kube-system"
-  depends_on = [module.eks, helm_release.aws-load-balancer-controller, module.cluster_autoscaler_irsa]
+  depends_on = [module.eks, module.aws_load_balancer_controller_irsa]
+
+  wait = true
 
   set = [
     {
-      name  = "autoDiscovery.clusterName"
+      name  = "clusterName"
       value = module.eks.cluster_name
     },
     {
-      name  = "awsRegion"
-      value = var.aws_region
-    },
-    {
-      name  = "extraArgs.scale-down-unneeded-time"
-      value = "2m"
-    },
-    {
-      name  = "extraArgs.skip-nodes-with-local-storage"
-      value = "false"
-    },
-    {
-      name  = "extraArgs.skip-nodes-with-system-pods"
-      value = "false"
+      name  = "vpcId"
+      value = module.vpc.vpc_id
     },
     {
       name  = "serviceAccount.create"
@@ -55,11 +43,11 @@ resource "helm_release" "cluster-autoscaler" {
     },
     {
       name  = "serviceAccount.name"
-      value = "cluster-autoscaler"
+      value = "aws-load-balancer-controller"
     },
     {
       name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.cluster_autoscaler_irsa.iam_role_arn
+      value = module.aws_load_balancer_controller_irsa.iam_role_arn
     }
   ]
 }
