@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/QUOJO-DAWSON/online-boutique-gitops.git
+    repoURL: https://github.com/iamfet/online-boutique-gitops.git   
     targetRevision: main
     path: overlays/dev
   destination:
