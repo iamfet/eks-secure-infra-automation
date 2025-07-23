@@ -123,7 +123,7 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
   # Cert-manager resources
   rule {
     api_groups = ["cert-manager.io"]
-    resources  = ["certificates", "issuers", "clusterissuers"]
+    resources  = ["certificates", "issuers", "clusterissuers", "certificaterequests"]
     verbs      = ["get", "list", "watch"]
   }
 }
