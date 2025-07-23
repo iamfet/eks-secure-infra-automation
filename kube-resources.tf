@@ -119,6 +119,13 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["*"]
     verbs      = ["get", "list", "watch"]
   }
+
+   # Cert-manager resources
+  rule {
+    api_groups = ["cert-manager.io"]
+    resources  = ["certificates", "issuers", "clusterissuers"]
+    verbs      = ["get", "list", "watch"]
+  }
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_viewer" {

@@ -5,7 +5,7 @@ resource "helm_release" "istio_prometheus" {
   version          = "75.12.0"
   create_namespace = true
   namespace        = "monitoring"
-  depends_on       = [helm_release.istiod]
+  depends_on       = [helm_release.istiod, helm_release.cert_manager]
   values = [
     <<-EOF
     prometheus:
