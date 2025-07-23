@@ -7,8 +7,8 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   depends_on       = [module.eks]
 
-  set {
-    name  = "installCRDs"
-    value = "true"
-  }
+  set = [
+    { name = "installCRDs"
+    value = "true" }
+  ]
 }
