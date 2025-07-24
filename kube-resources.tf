@@ -138,6 +138,13 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["*"]
     verbs      = ["get", "list", "watch"]
   }
+
+  rule {
+    api_groups = ["argoproj.io"]
+    resources  = ["*"]
+    verbs      = ["get", "list", "watch"]
+  }
+
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_viewer" {
