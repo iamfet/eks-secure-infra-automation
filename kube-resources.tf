@@ -120,6 +120,12 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     verbs      = ["get", "list", "watch"]
   }
 
+  rule {
+    api_groups = ["networking.istio.io"]
+    resources  = ["*"]
+    verbs      = ["get", "list", "watch"]
+  }
+
   # Cert-manager resources
   rule {
     api_groups = ["cert-manager.io"]
