@@ -89,18 +89,18 @@ resource "helm_release" "external-secrets" {
 
   wait = true
 
-  set = [
-    {
-      name  = "serviceAccount.create"
-      value = "true"
-    },
-    {
-      name  = "serviceAccount.name"
-      value = "external-secrets"
-    },
-    {
-      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.external_secrets_irsa.iam_role_arn
-    }
-  ]
+  set {
+    name  = "serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "external-secrets"
+  }
+
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.external_secrets_irsa.iam_role_arn
+  }
 }
