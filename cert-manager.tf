@@ -5,7 +5,7 @@ resource "helm_release" "cert_manager" {
   version          = "v1.18.2"
   namespace        = "cert-manager"
   create_namespace = true
-  depends_on       = [module.eks]
+  depends_on       = [module.eks, helm_release.aws-load-balancer-controller]
 
   set = [
     { name = "installCRDs"
