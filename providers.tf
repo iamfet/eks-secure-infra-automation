@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0"
+
   backend "s3" {
     bucket       = "state-eks-secure-infra-automation"
     key          = "terraform.tfstate"
@@ -15,7 +17,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.37"
+      version = ">= 2.38"
     }
     helm = {
       source  = "hashicorp/helm"
