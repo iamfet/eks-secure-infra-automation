@@ -29,18 +29,18 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   depends_on       = [module.eks, module.cert_manager_irsa, helm_release.aws-load-balancer-controller]
 
-  set {
-    name  = "installCRDs"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.cert_manager_irsa.iam_role_arn
-  }
+  set = [
+    {
+      name  = "installCRDs"
+      value = "true"
+    },
+    {
+      name  = "serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.cert_manager_irsa.iam_role_arn
+    }
+  ]
 }
