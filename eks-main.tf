@@ -9,7 +9,7 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 6.0" #5.21
+  version = "~> 5.21" #6.0
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -40,24 +40,24 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "21.0.4" # "~> 20.37"
+  version = "~> 20.37" #21.0
 
-  name               = "${var.project_name}-eks-cluster"
-  kubernetes_version = var.cluster_version
+  cluster_name    = "${var.project_name}-eks-cluster"
+  cluster_version = var.cluster_version
 
   subnet_ids = module.vpc.private_subnets
   vpc_id     = module.vpc.vpc_id
 
-  endpoint_public_access = true
+  cluster_endpoint_public_access = true
 
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
-  addons = {
+  cluster_addons = {
     coredns                = {}
-    eks-pod-identity-agent = { before_compute = true }
+    eks-pod-identity-agent = {}
     kube-proxy             = {}
-    vpc-cni                = { before_compute = true }
+    vpc-cni                = {}
   }
 
 
@@ -101,7 +101,6 @@ module "eks" {
     }
   }
 
-  create_node_security_group = false
   node_security_group_additional_rules = {
 
     #Enables automatic sidecar injection when pods are created
@@ -126,8 +125,8 @@ module "eks" {
   }
 
   tags = {
-    Environment = "dev"
-    Terraform   = "true"
+    environment = "development"
+    application = "${var.project_name}"
   }
 
 }
