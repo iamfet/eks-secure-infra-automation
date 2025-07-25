@@ -91,8 +91,8 @@ module "eks" {
     dev = {
       instance_types = ["t2.large"]
       min_size       = 1
-      max_size       = 6
-      desired_size   = 2
+      max_size       = 5
+      desired_size   = 3
 
       tags = {
         "k8s.io/cluster-autoscaler/enabled"                         = "true"
