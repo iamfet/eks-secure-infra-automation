@@ -42,7 +42,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0" #20.37
 
-  name    = "${var.project_name}-eks-cluster"
+  name               = "${var.project_name}-eks-cluster"
   kubernetes_version = var.cluster_version
 
   subnet_ids = module.vpc.private_subnets
