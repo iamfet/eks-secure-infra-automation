@@ -1,5 +1,5 @@
-# IRSA Roles
-# Allows Vault server pods to access AWS KMS for auto-unsealing
+# VAULT SERVER INFRASTRUCTURE
+# IRSA Role for Vault Server - Enables auto-unsealing via AWS KMS
 module "vault_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.59.0"
@@ -18,6 +18,7 @@ module "vault_irsa" {
   }
 }
 
+# IAM Policy for Vault KMS operations
 resource "aws_iam_policy" "vault_kms" {
   name = "vault-kms-policy"
   policy = jsonencode({
@@ -36,8 +37,22 @@ resource "aws_iam_policy" "vault_kms" {
   })
 }
 
-# Allows application pods to authenticate with Vault using AWS identity
-# instead of kubernetes tokens
+# KMS Key and Alias for Vault auto-unsealing
+resource "aws_kms_key" "vault_unseal" {
+  description = "Vault unseal key"
+  tags = {
+    Name = "vault-unseal-key"
+  }
+}
+
+resource "aws_kms_alias" "vault_unseal" {
+  name          = "alias/vault-unseal-key"
+  target_key_id = aws_kms_key.vault_unseal.key_id
+}
+
+
+# APPLICATION VAULT ACCESS
+# IRSA Role for Applications - Enables AWS-based authentication to Vault, no kubernetes tokens
 module "online_boutique_vault_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.59.0"
@@ -52,20 +67,23 @@ module "online_boutique_vault_irsa" {
   }
 }
 
-# KMS Resources
-resource "aws_kms_key" "vault_unseal" {
-  description = "Vault unseal key"
-  tags = {
-    Name = "vault-unseal-key"
+# Service Account for External Secrets Operator to authenticate with Vault
+resource "kubernetes_service_account" "vault_auth" {
+  metadata {
+    name      = "vault-auth"
+    namespace = "online-boutique"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = module.online_boutique_vault_irsa.iam_role_arn
+    }
   }
+  depends_on = [module.online_boutique_vault_irsa]
 }
 
-resource "aws_kms_alias" "vault_unseal" {
-  name          = "alias/vault-unseal-key"
-  target_key_id = aws_kms_key.vault_unseal.key_id
-}
 
-# Helm Release
+
+
+
+# Vault Helm Release - Deploys HA Vault cluster with auto-unsealing
 resource "helm_release" "vault" {
   name             = "vault"
   repository       = "https://helm.releases.hashicorp.com"
@@ -79,14 +97,13 @@ resource "helm_release" "vault" {
     file("${path.module}/vault-values.yaml")
   ]
 
-  set = [
-    {
-      name  = "server.serviceAccount.create"
-      value = "true"
-    },
-    {
-      name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.vault_irsa.iam_role_arn
-    }
-  ]
+  set {
+    name  = "server.serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.vault_irsa.iam_role_arn
+  }
 }
