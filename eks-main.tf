@@ -9,13 +9,13 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 6.0" #5.21
+  version = "~> 5.21" #6.0
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
   private_subnets = var.private_subnets_cidr
   public_subnets  = var.public_subnets_cidr
-  azs             = data.aws_availability_zones.azs.zone_ids
+  azs             = data.aws_availability_zones.azs.names
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
@@ -40,24 +40,24 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0" #20.37
+  version = "~> 20.37" #21.0
 
-  name               = "${var.project_name}-eks-cluster"
-  kubernetes_version = var.cluster_version
+  cluster_name    = "${var.project_name}-eks-cluster"
+  cluster_version = var.cluster_version
 
   subnet_ids = module.vpc.private_subnets
   vpc_id     = module.vpc.vpc_id
 
-  endpoint_public_access = true
+  cluster_endpoint_public_access = true
 
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
-  addons = {
+  cluster_addons = {
     coredns                = {}
-    eks-pod-identity-agent = { before_compute = true }
+    eks-pod-identity-agent = {}
     kube-proxy             = {}
-    vpc-cni                = { before_compute = true }
+    vpc-cni                = {}
   }
 
 
