@@ -79,13 +79,14 @@ resource "helm_release" "vault" {
     file("${path.module}/vault-values.yaml")
   ]
 
-  set {
-    name  = "server.serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.vault_irsa.iam_role_arn
-  }
+  set = [
+    {
+      name  = "server.serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.vault_irsa.iam_role_arn
+    }
+  ]
 }
