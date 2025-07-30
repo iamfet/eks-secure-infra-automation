@@ -125,8 +125,8 @@ module "eks" {
   }
 
   tags = {
-    environment = "development"
-    application = "${var.project_name}"
+    environment = "dev"
+    terraform = true
   }
 
 }
