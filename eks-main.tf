@@ -126,7 +126,7 @@ module "eks" {
 
   tags = {
     environment = "dev"
-    terraform = true
+    terraform   = true
   }
 
 }
