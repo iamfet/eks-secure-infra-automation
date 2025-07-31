@@ -87,7 +87,7 @@ resource "kubernetes_service_account" "vault_auth" {
       "eks.amazonaws.com/role-arn" = module.online_boutique_vault_irsa.iam_role_arn
     }
   }
-  depends_on = [module.online_boutique_vault_irsa]
+  depends_on = [module.online_boutique_vault_irsa, kubernetes_namespace.online-boutique]
 }
 
 
