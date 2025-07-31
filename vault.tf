@@ -18,22 +18,33 @@ module "vault_irsa" {
   }
 }
 
-# IAM Policy for Vault KMS operations
+# IAM Policy for Vault KMS operations and AWS auth
 resource "aws_iam_policy" "vault_kms" {
   name = "vault-kms-policy"
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "kms:Encrypt",
-        "kms:Decrypt",
-        "kms:ReEncrypt*",
-        "kms:GenerateDataKey*",
-        "kms:DescribeKey"
-      ]
-      Resource = aws_kms_key.vault_unseal.arn
-    }]
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = aws_kms_key.vault_unseal.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sts:GetCallerIdentity",
+          "iam:GetRole",
+          "iam:GetUser"
+        ]
+        Resource = "*"
+      }
+    ]
   })
 }
 
@@ -101,10 +112,6 @@ resource "helm_release" "vault" {
     {
       name  = "server.serviceAccount.create"
       value = "true"
-    },
-    {
-      name  = "server.serviceAccount.name"
-      value = "vault"
     },
     {
       name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"

@@ -6,11 +6,17 @@ server:
   
   dataStorage:
     enabled: true
-    size: 1Gi
+    size: 2Gi
     storageClass: gp2
   
   standalone:
     enabled: false
+  
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 8200
+    targetPort: 8200
   
   ha:
     enabled: true
