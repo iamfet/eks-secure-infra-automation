@@ -93,7 +93,6 @@ resource "kubernetes_service_account" "vault_auth" {
 
 
 
-
 # Vault Helm Release - Deploys HA Vault cluster with auto-unsealing
 resource "helm_release" "vault" {
   name             = "vault"
