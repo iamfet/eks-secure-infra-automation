@@ -85,6 +85,20 @@ module "eks" {
         namespaces = ["online-boutique"]
       }
     }
+
+    example = {
+      principal_arn = "arn:aws:iam::495599766789:user/fetdevops"
+
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+
   }
 
   eks_managed_node_groups = {

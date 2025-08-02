@@ -19,6 +19,14 @@ resource "helm_release" "argocd" {
   create_namespace = true
   namespace        = "argocd"
   depends_on       = [module.eks]
+
+  # inject isito sidecar proxy into argocd
+  set = [
+    {
+      name  = "global.podLabels.sidecar\\.istio\\.io/inject"
+      value = "true"
+    }
+  ]
 }
 
 resource "kubernetes_secret" "argocd_gitops_repo" {

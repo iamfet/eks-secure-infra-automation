@@ -39,18 +39,6 @@ resource "helm_release" "cluster-autoscaler" {
       value = var.aws_region
     },
     {
-      name  = "extraArgs.scale-down-unneeded-time"
-      value = "2m"
-    },
-    {
-      name  = "extraArgs.skip-nodes-with-local-storage"
-      value = "false"
-    },
-    {
-      name  = "extraArgs.skip-nodes-with-system-pods"
-      value = "false"
-    },
-    {
       name  = "rbac.create"
       value = "true"
     },
@@ -65,6 +53,19 @@ resource "helm_release" "cluster-autoscaler" {
     {
       name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
       value = module.cluster_autoscaler_irsa.iam_role_arn
+    },
+    #Fine tune autoscaling
+    {
+      name  = "extraArgs.scale-down-unneeded-time"
+      value = "2m"
+    },
+    {
+      name  = "extraArgs.skip-nodes-with-local-storage"
+      value = "false"
+    },
+    {
+      name  = "extraArgs.skip-nodes-with-system-pods"
+      value = "false"
     }
   ]
 }
