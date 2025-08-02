@@ -20,12 +20,8 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   depends_on       = [module.eks]
 
-  # inject isito sidecar proxy into argocd
-  set = [
-    {
-      name  = "global.podLabels.sidecar\\.istio\\.io/inject"
-      value = "true"
-    }
+  values = [
+    file("${path.module}/argocd-values.yaml")
   ]
 }
 
