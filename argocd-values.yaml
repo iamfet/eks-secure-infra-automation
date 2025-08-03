@@ -1,3 +1,11 @@
 global:
   podLabels:
     sidecar.istio.io/inject: "true"
+
+server:
+  insecure: true
+  config:
+    url: "https://argocd.fetdevops.com"
+    application.instanceLabelKey: argocd.argoproj.io/instance
+  service:
+    type: ClusterIP

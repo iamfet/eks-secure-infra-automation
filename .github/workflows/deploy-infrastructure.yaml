@@ -3,7 +3,7 @@ name: Deploy Infrastructure
 on:
   push:
     branches: [main]
-    paths: ["**.tf"]
+    paths: ["**.tf", "**.yaml"]
   pull_request:
     branches: [main]
     paths: ["**.tf"]
