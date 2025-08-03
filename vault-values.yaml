@@ -1,48 +1,48 @@
-global:
-  enabled: true
-
-server:
-  enabled: true
-  
-  serviceAccount:
-    create: false
-    name: vault
-  
-  dataStorage:
-    enabled: false
-  
-  standalone:
-    enabled: true
-    config: |
-      ui = true
-      listener "tcp" {
-        tls_disable = 1
-        address = "[::]:8200"
-        cluster_address = "[::]:8201"
-      }
-      storage "file" {
-        path = "/vault/data"
-      }
-      seal "awskms" {
-        region = "us-east-1"
-        kms_key_id = "alias/vault-unseal-key"
-      }
-  
-  ha:
-    enabled: false
-  
-  service:
-    enabled: true
-    type: ClusterIP
-    port: 8200
-    targetPort: 8200
-
-ui:
-  enabled: true
-  serviceType: ClusterIP
-
-injector:
-  enabled: false
-
-csi:
-  enabled: false
+#global:
+#  enabled: true
+#
+#server:
+#  enabled: true
+#  
+#  serviceAccount:
+#    create: false
+#    name: vault
+#  
+#  dataStorage:
+#    enabled: false
+#  
+#  standalone:
+#    enabled: true
+#    config: |
+#      ui = true
+#      listener "tcp" {
+#        tls_disable = 1
+#        address = "[::]:8200"
+#        cluster_address = "[::]:8201"
+#      }
+#      storage "file" {
+#        path = "/vault/data"
+#      }
+#      seal "awskms" {
+#        region = "us-east-1"
+#        kms_key_id = "alias/vault-unseal-key"
+#      }
+#  
+#  ha:
+#    enabled: false
+#  
+#  service:
+#    enabled: true
+#    type: ClusterIP
+#    port: 8200
+#    targetPort: 8200
+#
+#ui:
+#  enabled: true
+#  serviceType: ClusterIP
+#
+#injector:
+#  enabled: false
+#
+#csi:
+#  enabled: false
