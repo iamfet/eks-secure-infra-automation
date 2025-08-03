@@ -36,6 +36,7 @@ resource "kubernetes_secret" "argocd_gitops_repo" {
     }
   }
 
+
   data = {
     type : "git"
     url : var.gitops_url
