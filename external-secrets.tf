@@ -17,10 +17,6 @@ resource "helm_release" "external-secrets" {
     {
       name  = "serviceAccount.name"
       value = "external-secrets"
-    },
-    {
-      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.external_secrets_irsa.iam_role_arn
     }
   ]
 }
