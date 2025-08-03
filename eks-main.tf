@@ -142,7 +142,6 @@ module "eks" {
     environment = "dev"
     terraform   = true
   }
-
 }
 
 
