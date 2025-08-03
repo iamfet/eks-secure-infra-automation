@@ -52,14 +52,7 @@ resource "aws_kms_alias" "vault_unseal" {
 
 
 # APPLICATION VAULT ACCESS
-# Service Account for External Secrets Operator to authenticate with Vault using Kubernetes auth
-resource "kubernetes_service_account" "vault_auth" {
-  metadata {
-    name      = "vault-auth"
-    namespace = "online-boutique"
-  }
-  depends_on = [kubernetes_namespace.online-boutique]
-}
+# Service account and RBAC are managed in GitOps external-secret resources
 
 
 
