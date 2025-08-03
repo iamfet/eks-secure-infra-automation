@@ -4,8 +4,12 @@ global:
 
 server:
   insecure: true
-  config:
-    url: "https://argocd.fetdevops.com"
-    application.instanceLabelKey: argocd.argoproj.io/instance
   service:
     type: ClusterIP
+
+configs:
+  params:
+    server.insecure: "true"
+  cm:
+    url: "https://argocd.fetdevops.com"
+    application.instanceLabelKey: argocd.argoproj.io/instance
