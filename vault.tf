@@ -78,18 +78,6 @@ module "online_boutique_vault_irsa" {
   }
 }
 
-# Service Account for Vault Server
-resource "kubernetes_service_account" "vault" {
-  metadata {
-    name      = "vault"
-    namespace = "vault"
-    annotations = {
-      "eks.amazonaws.com/role-arn" = module.vault_irsa.iam_role_arn
-    }
-  }
-  depends_on = [module.vault_irsa]
-}
-
 # Service Account for External Secrets Operator to authenticate with Vault
 resource "kubernetes_service_account" "vault_auth" {
   metadata {
@@ -114,9 +102,24 @@ resource "helm_release" "vault" {
   version          = "0.28.1"
   create_namespace = true
   namespace        = "vault"
-  depends_on       = [module.eks, aws_kms_key.vault_unseal, kubernetes_service_account.vault]
+  depends_on       = [module.eks, aws_kms_key.vault_unseal]
 
   values = [
     file("${path.module}/vault-values.yaml")
+  ]
+
+  set = [
+    {
+      name  = "server.serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "server.serviceAccount.name"
+      value = "vault"
+    },
+    {
+      name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.vault_irsa.iam_role_arn
+    }
   ]
 }
