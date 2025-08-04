@@ -17,6 +17,14 @@ resource "helm_release" "external-secrets" {
     {
       name  = "serviceAccount.name"
       value = "external-secrets"
+    },
+    {
+      name  = "serviceMonitor.enabled"
+      value = "true"
+    },
+    {
+      name  = "metrics.service.enabled"
+      value = "true"
     }
   ]
 }
