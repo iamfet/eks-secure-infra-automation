@@ -17,6 +17,7 @@ resource "helm_release" "istio_prometheus" {
           enabled: true
           label: grafana_dashboard
           labelValue: "1"
+          searchNamespace: ALL
     EOF
   ]
 }
