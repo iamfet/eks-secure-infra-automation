@@ -6,6 +6,25 @@ server:
   insecure: true
   service:
     type: ClusterIP
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 8083
+
+controller:
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 8082
+
+repoServer:
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 8084
 
 configs:
   params:
