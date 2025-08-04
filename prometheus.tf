@@ -11,6 +11,12 @@ resource "helm_release" "istio_prometheus" {
     prometheus:
       prometheusSpec:
         serviceMonitorSelectorNilUsesHelmValues: false
+    grafana:
+      sidecar:
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+          labelValue: "1"
     EOF
   ]
 }
