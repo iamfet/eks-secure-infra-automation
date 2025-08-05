@@ -1,6 +1,6 @@
 resource "helm_release" "defectdojo" {
   name       = "defectdojo"
-  repository = "https://defectdojo.github.io/django-DefectDojo"
+  repository = "https://raw.githubusercontent.com/DefectDojo/django-DefectDojo/helm-charts"
   chart      = "defectdojo"
   version    = "1.6.153"
   namespace  = "defectdojo"
