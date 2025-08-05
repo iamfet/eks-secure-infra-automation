@@ -1,9 +1,34 @@
-#ignore tf folder
-.terraform/*
-
-#ignore tf state files
+# Terraform
 *.tfstate
 *.tfstate.*
-
-#ignore tfvars variable file as it contains sensitive info
 *.tfvars
+.terraform/
+.terraform.lock.hcl
+terraform.tfplan
+terraform.tfstate.backup
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backup files
+*.backup
+*.bak
+
+# Keep architecture diagram
+!architecture.png

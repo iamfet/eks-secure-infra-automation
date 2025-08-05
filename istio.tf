@@ -31,6 +31,6 @@ resource "helm_release" "istio-ingressgateway" {
   depends_on       = [helm_release.istiod]
 
   values = [
-    file("${path.module}/istio-gateway-values.yaml")
+    file("${path.module}/helm-values/istio-gateway.yaml")
   ]
 }

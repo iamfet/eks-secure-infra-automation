@@ -51,12 +51,6 @@ resource "aws_kms_alias" "vault_unseal" {
 }
 
 
-# APPLICATION VAULT ACCESS
-# Service account and RBAC are managed in GitOps external-secret resources
-
-
-
-# Vault Helm Release - Deploys HA Vault cluster with auto-unsealing
 resource "helm_release" "vault" {
   name             = "vault"
   repository       = "https://helm.releases.hashicorp.com"
@@ -67,7 +61,7 @@ resource "helm_release" "vault" {
   depends_on       = [module.eks, aws_kms_key.vault_unseal]
 
   values = [
-    file("${path.module}/vault-values.yaml")
+    file("${path.module}/helm-values/vault.yaml")
   ]
 
   set = [
