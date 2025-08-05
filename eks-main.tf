@@ -61,7 +61,6 @@ module "eks" {
     aws-ebs-csi-driver     = {}
   }
 
-
   # Set authentication mode to API
   authentication_mode = "API"
 
