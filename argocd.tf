@@ -18,7 +18,7 @@ resource "helm_release" "argocd" {
   version          = "8.0.17"
   create_namespace = true
   namespace        = "argocd"
-  depends_on       = [module.eks]
+  depends_on       = [module.eks, helm_release.aws_load_balancer_controller]
 
   values = [
     file("${path.module}/helm-values/argocd.yaml")
