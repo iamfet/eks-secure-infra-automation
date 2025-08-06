@@ -216,8 +216,9 @@ jobs:
           kubectl get nodes
           kubectl get pods --all-namespaces
 
-      - name: Apply Online Boutique ArgoCD App
+      - name: Apply ArgoCD Applications
         if: env.CLUSTER_NAME != ''
         run: |
           kubectl apply -f argocd-apps/online-boutique-argo-app.yaml
           kubectl apply -f argocd-apps/cluster-resources-argo-app.yaml
+          kubectl apply -f argocd-apps/defectdojo-argo-app.yaml
