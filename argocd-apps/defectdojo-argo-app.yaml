@@ -9,6 +9,8 @@ spec:
     repoURL: https://github.com/iamfet/online-boutique-gitops.git
     targetRevision: main
     path: defectdojo-app
+    kustomize:
+      buildOptions: --enable-helm
   destination:
     server: https://kubernetes.default.svc
     namespace: defectdojo
