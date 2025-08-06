@@ -15,7 +15,7 @@ resource "helm_release" "argocd" {
   name             = "argo-cd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
-  version          = "8.0.17"
+  version          = "8.2.5"
   create_namespace = true
   namespace        = "argocd"
   depends_on       = [module.eks, helm_release.aws-load-balancer-controller]
