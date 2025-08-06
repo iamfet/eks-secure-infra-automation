@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: defectdojo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/iamfet/online-boutique-gitops.git
+    targetRevision: main
+    path: defectdojo-app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: defectdojo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
