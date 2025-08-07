@@ -147,7 +147,6 @@ module "eks" {
 
 
 
-
 #module "eks_blueprints_addons" {
 #  depends_on = [module.eks]
 #  source     = "aws-ia/eks-blueprints-addons/aws"
