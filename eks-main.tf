@@ -103,9 +103,9 @@ module "eks" {
 
   eks_managed_node_groups = {
     dev = {
-      instance_types = ["t2.xlarge"]
+      instance_types = ["t2.large"]
       min_size       = 1
-      max_size       = 5
+      max_size       = 6
       desired_size   = 3
 
       tags = {
