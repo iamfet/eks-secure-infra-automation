@@ -17,4 +17,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false #creates namespace specified in "destination" if it does not exist, otherwise application will fail to sync
+      - CreateNamespace=true #creates namespace specified in "destination" if it does not exist, otherwise application will fail to sync
