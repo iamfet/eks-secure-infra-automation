@@ -59,7 +59,7 @@ module "eks" {
     kube-proxy             = {}
     vpc-cni                = {}
     aws-ebs-csi-driver = {
-      most_recent = true
+      most_recent                 = true
       resolve_conflicts_on_create = "OVERWRITE"
     }
   }
