@@ -27,14 +27,14 @@ resource "kubernetes_namespace" "online-boutique" {
   }
 }
 
-# Create defectdojo namespace with Istio injection disabled temporarily
+# Create defectdojo namespace with Istio injection
 resource "kubernetes_namespace" "defectdojo" {
   depends_on = [module.eks]
 
   metadata {
     name = "defectdojo"
     labels = {
-      "istio-injection" = "disabled"
+      "istio-injection" = "enabled"
       "name"            = "defectdojo"
     }
   }
