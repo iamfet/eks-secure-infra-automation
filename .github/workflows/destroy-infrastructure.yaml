@@ -55,6 +55,11 @@ jobs:
           # Initialize with remote backend
           terraform init
 
+      - name: Unlock Terraform State
+        run: |
+          terraform force-unlock -force ddb2c3c3-9f55-497f-d356-b5a4ab2c53ea
+        continue-on-error: true
+
       - name: Remove ArgoCD applications
         run: |
           CLUSTER_NAME=$(terraform output -raw cluster_name 2>/dev/null || echo "ama-shop-eks-cluster")
