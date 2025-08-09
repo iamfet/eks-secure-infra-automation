@@ -108,7 +108,7 @@ module "eks" {
     dev = {
       instance_types = ["t2.xlarge"]
       min_size       = 1
-      max_size       = 3
+      max_size       = 4
       desired_size   = 3
 
       tags = {
