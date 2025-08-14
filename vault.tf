@@ -13,14 +13,16 @@ module "vault_irsa" {
     }
   }
 
-  role_policy_arns = {
-    kms = aws_iam_policy.vault_kms.arn
-  }
-
   tags = {
     Environment = var.environment
     Terraform   = "true"
   }
+}
+
+# Attach KMS policy to Vault IRSA role
+resource "aws_iam_role_policy_attachment" "vault_kms" {
+  role       = module.vault_irsa.iam_role_name
+  policy_arn = aws_iam_policy.vault_kms.arn
 }
 
 # IAM Policy for Vault KMS operations
