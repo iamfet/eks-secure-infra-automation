@@ -2,7 +2,7 @@
 # IRSA Role for Vault Server - Enables auto-unsealing via AWS KMS
 module "vault_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  version = "6.0"
+  version = "~> 6.0"
 
   name = "vault-kms-role"
 

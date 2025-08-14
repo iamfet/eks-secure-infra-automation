@@ -4,7 +4,7 @@ data "aws_route53_zone" "fetdevops" {
 
 module "cert_manager_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  version = "6.0"
+  version = "~> 6.0"
 
   name                          = "${var.project_name}-cert-manager-irsa"
   attach_cert_manager_policy    = true
