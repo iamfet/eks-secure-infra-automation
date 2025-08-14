@@ -9,7 +9,7 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.21" #6.0
+  version = "~> 6.0" #6.0
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -24,6 +24,8 @@ module "vpc" {
 
   tags = {
     "kubernetes.io/cluster/${var.project_name}-eks-cluster" = "shared" # Tags required for EKS to discover subnets
+    Terraform                                               = "true"
+    Environment                                             = var.environment
   }
 
   public_subnet_tags = {
@@ -40,28 +42,27 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.37" #21.0
+  version = "~> 21.0" #21.0
 
-  cluster_name    = "${var.project_name}-eks-cluster"
-  cluster_version = var.cluster_version
+  name               = "${var.project_name}-eks-cluster"
+  kubernetes_version = var.kubernetes_version
 
   subnet_ids = module.vpc.private_subnets
   vpc_id     = module.vpc.vpc_id
 
-  cluster_endpoint_public_access = true
+  endpoint_public_access = true
 
   # Ensure proper dependency order
   depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
 
-  cluster_addons = {
+  addons = {
     coredns                = {}
-    eks-pod-identity-agent = {}
+    eks-pod-identity-agent = { before_compute = true }
     kube-proxy             = {}
-    vpc-cni                = {}
+    vpc-cni                = { before_compute = true }
     aws-ebs-csi-driver = {
-      most_recent                 = true
-      resolve_conflicts_on_create = "OVERWRITE"
-      service_account_role_arn    = module.ebs_csi_irsa_role.iam_role_arn
+      most_recent              = true
+      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
     }
   }
 
@@ -142,23 +143,29 @@ module "eks" {
   }
 
   tags = {
-    environment = "dev"
+    environment = var.environment
     terraform   = true
   }
 }
 
 # EBS CSI Driver IRSA
-module "ebs_csi_irsa_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+module "ebs_csi_driver_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.0"
 
-  role_name             = "${var.project_name}-ebs-csi"
+  name                  = "${var.project_name}-ebs-csi"
   attach_ebs_csi_policy = true
 
   oidc_providers = {
-    ex = {
+    main = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
     }
+  }
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
   }
 }
 

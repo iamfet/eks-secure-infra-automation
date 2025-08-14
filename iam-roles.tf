@@ -14,6 +14,11 @@ resource "aws_iam_role" "external-admin" {
       }
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
+  }
 }
 
 resource "aws_iam_role_policy" "external-admin-eks-access" {
@@ -48,6 +53,11 @@ resource "aws_iam_role" "external-developer" {
       }
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
+  }
 }
 
 resource "aws_iam_role_policy" "external-developer-eks-access" {

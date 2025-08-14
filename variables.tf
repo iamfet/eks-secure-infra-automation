@@ -22,7 +22,7 @@ variable "project_name" {
   default     = "fet-shop"
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "Version of the EKS cluster"
   type        = string
   default     = "1.33"
@@ -63,4 +63,10 @@ variable "gitops_password" {
   description = "Password of git repo argocd connects and sync"
   type        = string
   # No default value
+}
+
+variable "environment" {
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+  default     = "dev"
 }

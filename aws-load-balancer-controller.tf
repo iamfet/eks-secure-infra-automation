@@ -1,8 +1,8 @@
 module "aws_load_balancer_controller_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.59"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.0"
 
-  role_name                              = "${var.project_name}-aws-load-balancer-controller-irsa"
+  name                                   = "${var.project_name}-aws-load-balancer-controller-irsa"
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
@@ -13,7 +13,7 @@ module "aws_load_balancer_controller_irsa" {
   }
 
   tags = {
-    Environment = "dev"
+    Environment = var.environment
     Terraform   = "true"
   }
 }

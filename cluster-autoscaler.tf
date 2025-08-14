@@ -1,8 +1,8 @@
 module "cluster_autoscaler_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.59"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.0"
 
-  role_name                        = "${var.project_name}-cluster-autoscaler-irsa"
+  name                             = "${var.project_name}-cluster-autoscaler-irsa"
   attach_cluster_autoscaler_policy = true
   cluster_autoscaler_cluster_names = [module.eks.cluster_name]
 
@@ -14,7 +14,7 @@ module "cluster_autoscaler_irsa" {
   }
 
   tags = {
-    Environment = "dev"
+    Environment = var.environment
     Terraform   = "true"
   }
 }

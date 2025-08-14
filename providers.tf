@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.5"
 
   backend "s3" {
     bucket       = "state-eks-secure-infra-automation"
@@ -13,7 +13,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.95"
+      version = ">= 6.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"

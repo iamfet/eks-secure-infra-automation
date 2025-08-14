@@ -1,10 +1,10 @@
 # VAULT SERVER INFRASTRUCTURE
 # IRSA Role for Vault Server - Enables auto-unsealing via AWS KMS
 module "vault_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.59.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.0"
 
-  role_name = "vault-kms-role"
+  name = "vault-kms-role"
 
   oidc_providers = {
     main = {
@@ -15,6 +15,11 @@ module "vault_irsa" {
 
   role_policy_arns = {
     kms = aws_iam_policy.vault_kms.arn
+  }
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
   }
 }
 
@@ -35,13 +40,20 @@ resource "aws_iam_policy" "vault_kms" {
       Resource = aws_kms_key.vault_unseal.arn
     }]
   })
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
+  }
 }
 
 # KMS Key and Alias for Vault auto-unsealing
 resource "aws_kms_key" "vault_unseal" {
   description = "Vault unseal key"
   tags = {
-    Name = "vault-unseal-key"
+    Name        = "vault-unseal-key"
+    Environment = var.environment
+    Terraform   = "true"
   }
 }
 
