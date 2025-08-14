@@ -9,7 +9,7 @@ data "aws_availability_zones" "azs" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 6.0" #6.0
+  version = "6.0.1" #6.0
 
   name            = "${var.project_name}-vpc"
   cidr            = var.vpc_cidr_block
@@ -42,7 +42,7 @@ module "vpc" {
 #EKS for Cluster
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0" #21.0
+  version = "21.0.9" #21.0
 
   name               = "${var.project_name}-eks-cluster"
   kubernetes_version = var.kubernetes_version
@@ -53,7 +53,7 @@ module "eks" {
   endpoint_public_access = true
 
   # Ensure proper dependency order
-  depends_on = [aws_iam_role.external-admin, aws_iam_role.external-developer, module.ebs_csi_driver_irsa]
+  depends_on = [aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   addons = {
     coredns                = {}
