@@ -15,7 +15,7 @@ module "vpc" {
   cidr            = var.vpc_cidr_block
   private_subnets = var.private_subnets_cidr
   public_subnets  = var.public_subnets_cidr
-  azs             = data.aws_availability_zones.azs.zone_ids
+  azs             = data.aws_availability_zones.azs.id
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
@@ -47,8 +47,9 @@ module "eks" {
   name               = "${var.project_name}-eks-cluster"
   kubernetes_version = var.kubernetes_version
 
-  subnet_ids = module.vpc.private_subnets
-  vpc_id     = module.vpc.vpc_id
+  vpc_id                   = module.vpc.vpc_id
+  subnet_ids               = module.vpc.public_subnets
+  control_plane_subnet_ids = module.vpc.private_subnets
 
   endpoint_public_access = true
 
