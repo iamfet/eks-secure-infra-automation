@@ -47,8 +47,8 @@ module "eks" {
   name               = "${var.project_name}-eks-cluster"
   kubernetes_version = var.kubernetes_version
 
-  vpc_id                   = module.vpc.vpc_id
-  subnet_ids               = module.vpc.private_subnets
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
   endpoint_public_access = true
 
