@@ -52,6 +52,8 @@ module "eks" {
 
   endpoint_public_access = true
 
+  depends_on = [ module.vpc ]
+
   addons = {
     coredns                = {}
     eks-pod-identity-agent = { before_compute = true }
