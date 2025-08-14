@@ -47,7 +47,7 @@ resource "helm_release" "aws-load-balancer-controller" {
     },
     {
       name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.aws_load_balancer_controller_irsa.iam_role_arn
+      value = module.aws_load_balancer_controller_irsa.arn
     }
   ]
 }

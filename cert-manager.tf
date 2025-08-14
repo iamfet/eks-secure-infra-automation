@@ -45,7 +45,7 @@ resource "helm_release" "cert_manager" {
     },
     {
       name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.cert_manager_irsa.iam_role_arn
+      value = module.cert_manager_irsa.arn
     }
   ]
 }

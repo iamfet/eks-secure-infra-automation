@@ -89,7 +89,7 @@ resource "helm_release" "vault" {
     },
     {
       name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.vault_irsa.iam_role_arn
+      value = module.vault_irsa.arn
     }
   ]
 }

@@ -52,7 +52,7 @@ resource "helm_release" "cluster-autoscaler" {
     },
     {
       name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.cluster_autoscaler_irsa.iam_role_arn
+      value = module.cluster_autoscaler_irsa.arn
     },
     #Fine tune autoscaling
     {
