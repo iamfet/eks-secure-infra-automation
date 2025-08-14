@@ -53,14 +53,14 @@ resource "aws_iam_policy" "vault_kms" {
 resource "aws_kms_key" "vault_unseal" {
   description = "Vault unseal key"
   tags = {
-    Name        = "${var.project_name}-vault-unseal-key"
+    Name        = "vault-unseal-key"
     Environment = var.environment
     Terraform   = "true"
   }
 }
 
 resource "aws_kms_alias" "vault_unseal" {
-  name          = "alias/${var.project_name}-vault-unseal-key"
+  name          = "alias/vault-unseal-key"
   target_key_id = aws_kms_key.vault_unseal.key_id
 }
 
