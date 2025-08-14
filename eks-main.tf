@@ -53,7 +53,7 @@ module "eks" {
   endpoint_public_access = true
 
   # Ensure proper dependency order
-  depends_on = [module.vpc, aws_iam_role.external-admin, aws_iam_role.external-developer]
+  depends_on = [aws_iam_role.external-admin, aws_iam_role.external-developer]
 
   addons = {
     coredns                = {}
