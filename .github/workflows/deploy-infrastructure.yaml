@@ -102,6 +102,9 @@ jobs:
           path: ~/.terraform.d/plugin-cache
           key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
 
+      - name: Clear Terraform Module Cache
+        run: rm -rf .terraform/modules/
+
       - name: Terraform Init
         run: terraform init
 
@@ -197,6 +200,9 @@ jobs:
 
       - name: Create Terraform plugin cache directory
         run: mkdir -p ~/.terraform.d/plugin-cache
+
+      - name: Clear Terraform Module Cache
+        run: rm -rf .terraform/modules/
 
       - name: Terraform Init
         run: terraform init
