@@ -4,7 +4,7 @@ module "vault_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version = "~> 6.0"
 
-  name = "vault-kms-role"
+  name = "${var.project_name}-vault-irsa"
 
   oidc_providers = {
     main = {
@@ -27,7 +27,7 @@ resource "aws_iam_role_policy_attachment" "vault_kms" {
 
 # IAM Policy for Vault KMS operations
 resource "aws_iam_policy" "vault_kms" {
-  name = "vault-kms-policy"
+  name = "${var.project_name}-vault-kms-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -53,14 +53,14 @@ resource "aws_iam_policy" "vault_kms" {
 resource "aws_kms_key" "vault_unseal" {
   description = "Vault unseal key"
   tags = {
-    Name        = "vault-unseal-key"
+    Name        = "${var.project_name}-vault-unseal-key"
     Environment = var.environment
     Terraform   = "true"
   }
 }
 
 resource "aws_kms_alias" "vault_unseal" {
-  name          = "alias/vault-unseal-key"
+  name          = "alias/${var.project_name}-vault-unseal-key"
   target_key_id = aws_kms_key.vault_unseal.key_id
 }
 

@@ -153,7 +153,7 @@ module "ebs_csi_driver_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version = "~> 6.0"
 
-  name                  = "${var.project_name}-ebs-csi"
+  name                  = "${var.project_name}-ebs-irsa"
   attach_ebs_csi_policy = true
 
   oidc_providers = {
