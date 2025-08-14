@@ -52,7 +52,7 @@ module "eks" {
 
   endpoint_public_access = true
 
-  depends_on = [ module.vpc ]
+  depends_on = [module.vpc]
 
   addons = {
     coredns                = {}
