@@ -21,7 +21,7 @@ module "vault_irsa" {
 
 # Attach KMS policy to Vault IRSA role
 resource "aws_iam_role_policy_attachment" "vault_kms" {
-  role       = module.vault_irsa.iam_role_name
+  role       = module.vault_irsa.name
   policy_arn = aws_iam_policy.vault_kms.arn
 }
 
