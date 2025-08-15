@@ -24,7 +24,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   chart      = "aws-load-balancer-controller"
   version    = "1.13.3"
   namespace  = "kube-system"
-  depends_on = [module.eks, module.aws_load_balancer_controller_irsa]
+  depends_on = [module.eks, module.vpc, module.aws_load_balancer_controller_irsa]
 
   wait = true
 
