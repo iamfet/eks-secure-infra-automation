@@ -2,6 +2,10 @@ name: Bootstrap Backend
 
 on:
   workflow_dispatch:
+    inputs:
+      confirm_create:
+        description: 'Type "create" to confirm create backend'
+        required: true
 
 env:
   TF_VERSION: "1.12.0"
@@ -24,6 +28,14 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TF_VERSION }}
+
+    - name: Validate Input
+      run: |
+        if [ "${{ github.event.inputs.confirm_create }}" != "create" ]; then
+          echo "❌ Invalid input. You must type 'create' to proceed."
+          exit 1
+        fi
+        echo "✅ Input validated. Proceeding with backend creation."
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
