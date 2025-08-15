@@ -58,8 +58,7 @@ module "eks" {
     kube-proxy             = {}
     vpc-cni                = { before_compute = true }
     aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = module.ebs_csi_driver_irsa.arn
+      most_recent = true
     }
   }
 
@@ -145,18 +144,41 @@ module "eks" {
   }
 }
 
-# EBS CSI Driver IRSA
-module "ebs_csi_driver_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  version = "~> 6.0"
+# EBS CSI Driver IRSA (commented out - replaced with Pod Identity)
+# module "ebs_csi_driver_irsa" {
+#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+#   version = "~> 6.0"
+#
+#   name                  = "ebs-csi-irsa"
+#   attach_ebs_csi_policy = true
+#
+#   oidc_providers = {
+#     main = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+#     }
+#   }
+#
+#   tags = {
+#     Environment = var.environment
+#     Terraform   = "true"
+#   }
+# }
 
-  name                  = "ebs-csi-irsa"
-  attach_ebs_csi_policy = true
+# EBS CSI Driver Pod Identity
+module "ebs_csi_driver_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 2.0"
 
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+  name = "ebs-csi-driver"
+
+  attach_aws_ebs_csi_policy = true
+
+  associations = {
+    ebs-csi = {
+      cluster_name    = module.eks.cluster_name
+      namespace       = "kube-system"
+      service_account = "ebs-csi-controller-sa"
     }
   }
 
