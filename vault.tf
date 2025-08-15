@@ -1,29 +1,4 @@
 # VAULT SERVER INFRASTRUCTURE
-# IRSA Role for Vault Server (commented out - replaced with Pod Identity)
-# module "vault_irsa" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-#   version = "~> 6.0"
-#
-#   name = "${var.project_name}-vault-irsa"
-#
-#   oidc_providers = {
-#     main = {
-#       provider_arn               = module.eks.oidc_provider_arn
-#       namespace_service_accounts = ["vault:vault"]
-#     }
-#   }
-#
-#   tags = {
-#     Environment = var.environment
-#     Terraform   = "true"
-#   }
-# }
-#
-# # Attach KMS policy to Vault IRSA role
-# resource "aws_iam_role_policy_attachment" "vault_kms" {
-#   role       = module.vault_irsa.name
-#   policy_arn = aws_iam_policy.vault_kms.arn
-# }
 
 # Vault Pod Identity
 module "vault_pod_identity" {
@@ -32,7 +7,9 @@ module "vault_pod_identity" {
 
   name = "${var.project_name}-vault"
 
-  policy_arns = [aws_iam_policy.vault_kms.arn]
+  additional_policy_arns = {
+    vault_kms = aws_iam_policy.vault_kms.arn
+  }
 
   associations = {
     vault = {
@@ -113,3 +90,29 @@ resource "helm_release" "vault" {
 
   ]
 }
+
+# IRSA Role for Vault Server (commented out - replaced with Pod Identity)
+# module "vault_irsa" {
+#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+#   version = "~> 6.0"
+#
+#   name = "${var.project_name}-vault-irsa"
+#
+#   oidc_providers = {
+#     main = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["vault:vault"]
+#     }
+#   }
+#
+#   tags = {
+#     Environment = var.environment
+#     Terraform   = "true"
+#   }
+# }
+#
+# # Attach KMS policy to Vault IRSA role
+# resource "aws_iam_role_policy_attachment" "vault_kms" {
+#   role       = module.vault_irsa.name
+#   policy_arn = aws_iam_policy.vault_kms.arn
+# }

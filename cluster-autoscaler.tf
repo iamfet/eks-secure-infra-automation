@@ -1,25 +1,3 @@
-# Cluster Autoscaler IRSA (commented out - replaced with Pod Identity)
-# module "cluster_autoscaler_irsa" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-#   version = "~> 6.0"
-#
-#   name                             = "${var.project_name}-ca-irsa"
-#   attach_cluster_autoscaler_policy = true
-#   cluster_autoscaler_cluster_names = [module.eks.cluster_name]
-#
-#   oidc_providers = {
-#     main = {
-#       provider_arn               = module.eks.oidc_provider_arn
-#       namespace_service_accounts = ["kube-system:cluster-autoscaler"]
-#     }
-#   }
-#
-#   tags = {
-#     Environment = var.environment
-#     Terraform   = "true"
-#   }
-# }
-
 # Cluster Autoscaler Pod Identity
 module "cluster_autoscaler_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
@@ -91,3 +69,25 @@ resource "helm_release" "cluster-autoscaler" {
     }
   ]
 }
+
+# Cluster Autoscaler IRSA (commented out - replaced with Pod Identity)
+# module "cluster_autoscaler_irsa" {
+#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+#   version = "~> 6.0"
+#
+#   name                             = "${var.project_name}-ca-irsa"
+#   attach_cluster_autoscaler_policy = true
+#   cluster_autoscaler_cluster_names = [module.eks.cluster_name]
+#
+#   oidc_providers = {
+#     main = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+#     }
+#   }
+#
+#   tags = {
+#     Environment = var.environment
+#     Terraform   = "true"
+#   }
+# }
