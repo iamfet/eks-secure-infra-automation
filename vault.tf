@@ -1,5 +1,3 @@
-# VAULT SERVER INFRASTRUCTURE
-
 # Vault Pod Identity
 module "vault_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"

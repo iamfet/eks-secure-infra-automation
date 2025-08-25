@@ -53,7 +53,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   ]
 }
 
-# AWS Load Balancer Controller IRSA (commented out - replaced with Pod Identity)
+# AWS Load Balancer Controller IRSA (replaced with Pod Identity)
 # module "aws_load_balancer_controller_irsa" {
 #   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
 #   version = "~> 6.0"
