@@ -73,7 +73,8 @@ jobs:
             -var="user_for_dev_role=${{ secrets.DEV_USER_ARN }}" \
             -var="gitops_url=${{ secrets.GITOPS_URL }}" \
             -var="gitops_username=${{ secrets.GITOPS_USERNAME }}" \
-            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}"
+            -var="gitops_password=${{ secrets.GITOPS_PASSWORD_TOKEN }}" \
+            | tee plan_output.txt
         continue-on-error: true
 
       - name: Upload Plan
@@ -86,18 +87,19 @@ jobs:
       - name: Comment PR
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fs = require('fs');
+            const planOutput = fs.readFileSync('plan_output.txt', 'utf8');
+            
             const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`\n
-            ${process.env.PLAN}
+            \`\`\`terraform
+            ${planOutput}
             \`\`\`
 
             </details>

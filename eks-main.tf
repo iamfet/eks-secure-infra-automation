@@ -105,7 +105,7 @@ module "eks" {
     dev = {
       instance_types = ["t2.large"]
       min_size       = 1
-      max_size       = 4
+      max_size       = 5
       desired_size   = 2
 
       tags = {
