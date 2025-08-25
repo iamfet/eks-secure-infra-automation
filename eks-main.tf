@@ -103,10 +103,10 @@ module "eks" {
 
   eks_managed_node_groups = {
     dev = {
-      instance_types = ["t2.large"]
-      min_size       = 1
-      max_size       = 5
-      desired_size   = 2
+      instance_types = var.node_group_instance_types
+      min_size       = var.node_group_min_size
+      max_size       = var.node_group_max_size
+      desired_size   = var.node_group_desired_size
 
       tags = {
         "k8s.io/cluster-autoscaler/enabled"                         = "true"
